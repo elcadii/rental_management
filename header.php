@@ -6,10 +6,10 @@ if (session_status() === PHP_SESSION_NONE) session_start();
         <div class="flex justify-between h-16 items-center">
             <div class="flex items-center">
                 <i class="fas fa-home text-blue-600 text-2xl ml-3"></i>
-                <a href="dashboard.php" class="text-xl font-bold text-gray-900">نظام الإيجارات</a>
+                <a href="index.php" class="text-xl font-bold text-gray-900">نظام الإيجارات</a>
             </div>
             <div class="hidden md:flex items-center space-x-6 space-x-reverse">
-                <a href="dashboard.php" class="flex items-center text-blue-600 hover:text-blue-800 font-medium">
+                <a href="index.php" class="flex items-center text-blue-600 hover:text-blue-800 font-medium">
                     <i class="fas fa-home ml-2"></i>
                     الرئيسية
                 </a>
@@ -37,7 +37,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
     <!-- Mobile Menu -->
     <div id="mobile-menu" class="md:hidden hidden bg-white border-t border-blue-100">
         <div class="px-4 py-2 flex flex-col space-y-2">
-            <a href="dashboard.php" class="flex items-center text-blue-600 hover:text-blue-800 font-medium">
+            <a href="index.php" class="flex items-center text-blue-600 hover:text-blue-800 font-medium">
                 <i class="fas fa-home ml-2"></i>
                 الرئيسية
             </a>

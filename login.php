@@ -3,7 +3,7 @@ require_once 'config/db.php';
 
 // Redirect if already logged in
 if (isLoggedIn()) {
-    header('Location: dashboard.php');
+    header('Location: index.php');
     exit();
 }
 
@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['admin_name'] = $admin['name'];
             $_SESSION['admin_email'] = $admin['email'];
             
-            header('Location: dashboard.php');
+            header('Location: index.php');
             exit();
         } else {
             $errors['general'] = 'البريد الإلكتروني أو كلمة المرور غير صحيحة';

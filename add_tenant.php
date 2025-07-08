@@ -278,7 +278,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 <!-- أزرار الإجراءات -->
                 <div class="mt-8 flex justify-end space-x-4 space-x-reverse">
-                    <a href="dashboard.php" 
+                    <a href="index.php" 
                        class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition duration-200">
                         <i class="fas fa-times ml-1"></i>
                         إلغاء
