@@ -6,7 +6,7 @@ $tenant_id = (int)($_GET['id'] ?? 0);
 $errors = [];
 $success = '';
 
-// التحقق من وجود المستأجر وأنه يخص المدير الحالي
+// Check if tenant exists and belongs to the current admin
 $stmt = $pdo->prepare("SELECT * FROM tenants WHERE id = ? AND admin_id = ?");
 $stmt->execute([$tenant_id, $_SESSION['admin_id']]);
 $tenant = $stmt->fetch();
@@ -16,6 +16,11 @@ if (!$tenant) {
     exit();
 }
 
+// Fetch housing types for this admin
+$stmt = $pdo->prepare('SELECT * FROM housing_types WHERE user_id = ? ORDER BY created_at DESC');
+$stmt->execute([$_SESSION['admin_id']]);
+$admin_housing_types = $stmt->fetchAll();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $full_name = sanitize($_POST['full_name'] ?? '');
     $phone = sanitize($_POST['phone'] ?? '');
@@ -24,8 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $house_type = sanitize($_POST['house_type'] ?? '');
     $start_date = sanitize($_POST['start_date'] ?? '');
     $end_date = sanitize($_POST['end_date'] ?? '');
+    $price_per_day = isset($_POST['pricePerDay']) ? floatval($_POST['pricePerDay']) : '';
     
-    // التحقق من صحة البيانات
+    // Data validation
     if (empty($full_name)) {
         $errors['full_name'] = 'الاسم الكامل مطلوب';
     }
@@ -54,24 +60,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['end_date'] = 'تاريخ نهاية الإيجار مطلوب';
     }
     
-    // التحقق من أن تاريخ النهاية بعد تاريخ البداية
+    if ($price_per_day === '' || $price_per_day <= 0) {
+        $errors['pricePerDay'] = 'سعر الإيجار اليومي مطلوب ويجب أن يكون رقمًا موجبًا';
+    }
+    
+    // Check that end date is after start date
     if (!empty($start_date) && !empty($end_date)) {
         if (strtotime($end_date) <= strtotime($start_date)) {
             $errors['end_date'] = 'تاريخ النهاية يجب أن يكون بعد تاريخ البداية';
         }
     }
     
-    // تحديث المستأجر
+    // Update tenant
     if (empty($errors)) {
         $stmt = $pdo->prepare("
             UPDATE tenants 
-            SET full_name = ?, phone = ?, email = ?, cin = ?, house_type = ?, start_date = ?, end_date = ?
+            SET full_name = ?, phone = ?, email = ?, cin = ?, house_type = ?, start_date = ?, end_date = ?, price_per_day = ?
             WHERE id = ? AND admin_id = ?
         ");
         
-        if ($stmt->execute([$full_name, $phone, $email ?: null, $cin, $house_type, $start_date, $end_date, $tenant_id, $_SESSION['admin_id']])) {
+        if ($stmt->execute([$full_name, $phone, $email ?: null, $cin, $house_type, $start_date, $end_date, $price_per_day, $tenant_id, $_SESSION['admin_id']])) {
             $success = 'تم تحديث بيانات المستأجر بنجاح!';
-            // تحديث البيانات المعروضة
+            // Update displayed data
             $tenant['full_name'] = $full_name;
             $tenant['phone'] = $phone;
             $tenant['email'] = $email;
@@ -79,6 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $tenant['house_type'] = $house_type;
             $tenant['start_date'] = $start_date;
             $tenant['end_date'] = $end_date;
+            $tenant['price_per_day'] = $price_per_day;
         } else {
             $errors['general'] = 'حدث خطأ أثناء تحديث بيانات المستأجر';
         }
@@ -86,6 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
+<?php include 'header.php'; ?>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -101,40 +113,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </style>
 </head>
 <body class="bg-gray-50">
-    <!-- شريط التنقل -->
-    <nav class="bg-white shadow-lg border-b-2 border-blue-500">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center space-x-8 space-x-reverse">
-                    <div class="flex items-center">
-                        <i class="fas fa-home text-blue-600 text-2xl ml-3"></i>
-                        <a href="dashboard.php" class="text-xl font-bold text-gray-900">نظام الإيجارات</a>
-                    </div>
-                    <div class="hidden md:flex items-center space-x-6 space-x-reverse">
-                        <a href="dashboard.php" class="flex items-center text-gray-700 hover:text-blue-600 font-medium">
-                            <i class="fas fa-home ml-2"></i>
-                            الرئيسية
-                        </a>
-                        <a href="dashboard.php#tenants-list" class="flex items-center text-gray-700 hover:text-blue-600 font-medium">
-                            <i class="fas fa-users ml-2"></i>
-                            قائمة المستأجرين
-                        </a>
-                        <a href="add_tenant.php" class="flex items-center text-gray-700 hover:text-blue-600 font-medium">
-                            <i class="fas fa-plus ml-2"></i>
-                            إضافة مستأجر
-                        </a>
-                    </div>
-                </div>
-                <div class="flex items-center space-x-4 space-x-reverse">
-                    <span class="text-gray-700 font-medium">مرحباً، <?php echo htmlspecialchars($_SESSION['admin_name']); ?></span>
-                    <a href="logout.php" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-200">
-                        <i class="fas fa-sign-out-alt ml-1"></i>
-                        تسجيل الخروج
-                    </a>
-                </div>
-            </div>
-        </div>
-    </nav>
 
     <!-- القسم الرئيسي -->
     <div class="gradient-bg py-12">
@@ -147,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8">
         <div class="bg-white rounded-xl shadow-lg overflow-hidden">
             <div class="px-6 py-4 bg-gray-50 border-b">
-                <div class="flex items-center">
+                <div class="flex flex-col sm:flex-row items-center gap-2">
                     <i class="fas fa-user-edit text-blue-600 text-xl ml-3"></i>
                     <h3 class="text-lg font-bold text-gray-900">نموذج تعديل المستأجر</h3>
                 </div>
@@ -238,12 +216,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <select name="house_type" id="house_type" required
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
                             <option value="">اختر نوع السكن</option>
-                            <option value="شقة" <?php echo $tenant['house_type'] === 'شقة' ? 'selected' : ''; ?>>شقة</option>
-                            <option value="فيلا" <?php echo $tenant['house_type'] === 'فيلا' ? 'selected' : ''; ?>>فيلا</option>
-                            <option value="استوديو" <?php echo $tenant['house_type'] === 'استوديو' ? 'selected' : ''; ?>>استوديو</option>
-                            <option value="غرفة" <?php echo $tenant['house_type'] === 'غرفة' ? 'selected' : ''; ?>>غرفة</option>
-                            <option value="محل تجاري" <?php echo $tenant['house_type'] === 'محل تجاري' ? 'selected' : ''; ?>>محل تجاري</option>
-                            <option value="مكتب" <?php echo $tenant['house_type'] === 'مكتب' ? 'selected' : ''; ?>>مكتب</option>
+                            <?php foreach ($admin_housing_types as $type): ?>
+                                <option value="<?php echo htmlspecialchars($type['name']); ?>" <?php echo ($tenant['house_type'] ?? '') === $type['name'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($type['name']); ?></option>
+                            <?php endforeach; ?>
                         </select>
                         <div id="house_type-error" class="text-red-500 text-sm mt-1">
                             <?php echo $errors['house_type'] ?? ''; ?>
@@ -277,6 +252,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <?php echo $errors['end_date'] ?? ''; ?>
                         </div>
                     </div>
+                    
+                    <!-- سعر الإيجار اليومي -->
+                    <div>
+                        <label for="pricePerDay" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-money-bill-wave ml-1"></i>
+                            سعر الإيجار اليومي (بالعملة المحلية)
+                        </label>
+                        <input type="number" name="pricePerDay" id="pricePerDay" min="1" step="0.01" required
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                               placeholder="مثال: 100"
+                               value="<?php echo htmlspecialchars($tenant['price_per_day'] ?? ''); ?>">
+                        <div id="pricePerDay-error" class="text-red-500 text-sm mt-1">
+                            <?php echo $errors['pricePerDay'] ?? ''; ?>
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- معلومات إضافية -->
@@ -290,6 +280,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <li>• سيتم تحديث البيانات فوراً بعد الحفظ</li>
                         <li>• يمكنك إلغاء التعديل والعودة للقائمة الرئيسية</li>
                     </ul>
+                </div>
+                
+                <!-- إجمالي الإيجار (يتم تحديثه تلقائياً) -->
+                <div id="total-rent-info" class="mt-4 text-blue-800 font-bold text-lg flex items-center gap-2">
+                    <i class="fas fa-calculator"></i>
+                    <span id="days-count"></span>
+                    <span id="total-rent"></span>
                 </div>
                 
                 <!-- أزرار الإجراءات -->
@@ -376,10 +373,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
             
+            // التحقق من سعر الإيجار اليومي
+            const pricePerDay = parseFloat(document.getElementById('pricePerDay').value);
+            if (pricePerDay === 0 || isNaN(pricePerDay)) {
+                document.getElementById('pricePerDay-error').textContent = 'سعر الإيجار اليومي مطلوب ويجب أن يكون رقمًا موجبًا';
+                isValid = false;
+            }
+            
             if (!isValid) {
                 e.preventDefault();
             }
         });
+
+        function calculateTotalRent() {
+            const startDate = document.getElementById('start_date').value;
+            const endDate = document.getElementById('end_date').value;
+            const pricePerDay = parseFloat(document.getElementById('pricePerDay').value);
+            let days = 0;
+            let total = 0;
+            if (startDate && endDate) {
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+                days = Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
+                if (days > 0 && !isNaN(pricePerDay) && pricePerDay > 0) {
+                    total = days * pricePerDay;
+                }
+            }
+            document.getElementById('days-count').textContent = days > 0 ? `عدد الأيام: ${days}` : '';
+            document.getElementById('total-rent').textContent = (days > 0 && total > 0) ? `| إجمالي الإيجار: ${total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : '';
+        }
+        document.getElementById('start_date').addEventListener('input', calculateTotalRent);
+        document.getElementById('end_date').addEventListener('input', calculateTotalRent);
+        document.getElementById('pricePerDay').addEventListener('input', calculateTotalRent);
+        window.addEventListener('DOMContentLoaded', calculateTotalRent);
     </script>
 </body>
 </html>

@@ -1,12 +1,12 @@
--- إنشاء قاعدة البيانات
+-- Create the database
 CREATE DATABASE IF NOT EXISTS rental_management CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE rental_management;
 
--- حذف الجداول إذا كانت موجودة
+-- Drop tables if they exist
 DROP TABLE IF EXISTS tenants;
 DROP TABLE IF EXISTS admins;
 
--- جدول المديرين (أصحاب العقارات)
+-- Admins table (property owners)
 CREATE TABLE IF NOT EXISTS admins (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS admins (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- جدول المستأجرين - محدث بالحقول الجديدة
+-- Tenants table - updated with new fields
 CREATE TABLE IF NOT EXISTS tenants (
     id INT AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS tenants (
     FOREIGN KEY (admin_id) REFERENCES admins(id) ON DELETE CASCADE
 );
 
--- إدراج بيانات تجريبية
+-- Insert sample data
 INSERT INTO admins (name, email, password) VALUES 
 ('أحمد محمد', 'ahmed@example.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
 ('فاطمة علي', 'fatima@example.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');

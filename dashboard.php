@@ -2,9 +2,42 @@
 require_once 'config/db.php';
 requireLogin();
 
-// جلب المستأجرين الخاصين بالمدير المسجل فقط
+// Check if session admin_id exists in admins table
+$stmt = $pdo->prepare('SELECT COUNT(*) FROM admins WHERE id = ?');
+$stmt->execute([$_SESSION['admin_id']]);
+if ($stmt->fetchColumn() == 0) {
+    // Destroy session and redirect to login
+    session_destroy();
+    header('Location: login.php');
+    exit();
+}
+
+// Handle add housing type form
+$housing_type_error = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_housing_type'])) {
+    $type_name = sanitize($_POST['housing_type_name'] ?? '');
+    if (empty($type_name)) {
+        $housing_type_error = 'اسم نوع السكن مطلوب';
+    } else {
+        // Check for duplicate for this admin
+        $stmt = $pdo->prepare('SELECT COUNT(*) FROM housing_types WHERE name = ? AND user_id = ?');
+        $stmt->execute([$type_name, $_SESSION['admin_id']]);
+        if ($stmt->fetchColumn() > 0) {
+            $housing_type_error = 'هذا النوع مضاف بالفعل.';
+        } else {
+            $stmt = $pdo->prepare('INSERT INTO housing_types (name, user_id) VALUES (?, ?)');
+            $stmt->execute([$type_name, $_SESSION['admin_id']]);
+        }
+    }
+}
+// Fetch all housing types for this admin
+$stmt = $pdo->prepare('SELECT * FROM housing_types WHERE user_id = ? ORDER BY created_at DESC');
+$stmt->execute([$_SESSION['admin_id']]);
+$admin_housing_types = $stmt->fetchAll();
+
+// Fetch tenants belonging only to the logged-in admin
 $stmt = $pdo->prepare("
-    SELECT id, full_name, phone, email, cin, house_type, start_date, end_date, created_at 
+    SELECT id, full_name, phone, email, cin, house_type, start_date, end_date, created_at, price_per_day 
     FROM tenants 
     WHERE admin_id = ? 
     ORDER BY created_at DESC
@@ -12,7 +45,7 @@ $stmt = $pdo->prepare("
 $stmt->execute([$_SESSION['admin_id']]);
 $tenants = $stmt->fetchAll();
 
-// حساب الإحصائيات
+// Calculate statistics
 $stats_stmt = $pdo->prepare("
     SELECT 
         COUNT(*) as total_tenants,
@@ -26,8 +59,35 @@ $stats_stmt = $pdo->prepare("
 ");
 $stats_stmt->execute([$_SESSION['admin_id']]);
 $stats = $stats_stmt->fetch();
+
+// Build a map of housing type names by ID for this admin
+$housing_type_map = [];
+foreach ($admin_housing_types as $type) {
+    $housing_type_map[$type['id']] = $type['name'];
+    $housing_type_map[$type['name']] = $type['name']; // for backward compatibility if house_type is a name
+}
+
+// Prepare filters for full tenant list
+$filter_housing_type = isset($_GET['full_filter_housing_type']) ? $_GET['full_filter_housing_type'] : '';
+$search_query = isset($_GET['full_search']) ? trim($_GET['full_search']) : '';
+$full_tenants_query = "SELECT id, full_name, phone, email, cin, house_type, start_date, end_date, created_at, price_per_day FROM tenants WHERE admin_id = ?";
+$full_params = [$_SESSION['admin_id']];
+if ($filter_housing_type !== '') {
+    $full_tenants_query .= " AND house_type = ?";
+    $full_params[] = $filter_housing_type;
+}
+if ($search_query !== '') {
+    $full_tenants_query .= " AND (full_name LIKE ? OR phone LIKE ? OR email LIKE ? OR cin LIKE ?)";
+    $search_term = "%$search_query%";
+    $full_params = array_merge($full_params, [$search_term, $search_term, $search_term, $search_term]);
+}
+$full_tenants_query .= " ORDER BY created_at DESC";
+$full_stmt = $pdo->prepare($full_tenants_query);
+$full_stmt->execute($full_params);
+$full_tenants = $full_stmt->fetchAll();
 ?>
 
+<?php include 'header.php'; ?>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -45,40 +105,7 @@ $stats = $stats_stmt->fetch();
     </style>
 </head>
 <body class="bg-gray-50">
-    <!-- شريط التنقل العلوي -->
-    <nav class="bg-white shadow-lg border-b-2 border-blue-500">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center space-x-8 space-x-reverse">
-                    <div class="flex items-center">
-                        <i class="fas fa-home text-blue-600 text-2xl ml-3"></i>
-                        <h1 class="text-xl font-bold text-gray-900">نظام الإيجارات</h1>
-                    </div>
-                    <div class="hidden md:flex items-center space-x-6 space-x-reverse">
-                        <a href="dashboard.php" class="flex items-center text-blue-600 hover:text-blue-800 font-medium">
-                            <i class="fas fa-home ml-2"></i>
-                            الرئيسية
-                        </a>
-                        <a href="#tenants-list" class="flex items-center text-gray-700 hover:text-blue-600 font-medium">
-                            <i class="fas fa-users ml-2"></i>
-                            قائمة المستأجرين
-                        </a>
-                        <a href="add_tenant.php" class="flex items-center text-gray-700 hover:text-blue-600 font-medium">
-                            <i class="fas fa-plus ml-2"></i>
-                            إضافة مستأجر
-                        </a>
-                    </div>
-                </div>
-                <div class="flex items-center space-x-4 space-x-reverse">
-                    <span class="text-gray-700 font-medium">مرحباً، <?php echo htmlspecialchars($_SESSION['admin_name']); ?></span>
-                    <a href="logout.php" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-200">
-                        <i class="fas fa-sign-out-alt ml-1"></i>
-                        تسجيل الخروج
-                    </a>
-                </div>
-            </div>
-        </div>
-    </nav>
+
 
     <!-- القسم الرئيسي -->
     <div class="gradient-bg py-16">
@@ -140,7 +167,10 @@ $stats = $stats_stmt->fetch();
                             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                                 <div>
                                     <p class="font-medium text-gray-900"><?php echo htmlspecialchars($tenant['full_name']); ?></p>
-                                    <p class="text-sm text-gray-500"><?php echo htmlspecialchars($tenant['house_type']); ?></p>
+                                    <p class="text-sm text-gray-500"><?php 
+                                        $ht = $tenant['house_type'];
+                                        echo htmlspecialchars(isset($housing_type_map[$ht]) ? $housing_type_map[$ht] : $ht);
+                                    ?></p>
                                 </div>
                                 <div class="flex space-x-2 space-x-reverse">
                                     <a href="edit_tenant.php?id=<?php echo $tenant['id']; ?>" 
@@ -213,14 +243,30 @@ $stats = $stats_stmt->fetch();
 
     <!-- القائمة الكاملة للمستأجرين -->
     <?php if (!empty($tenants)): ?>
-    <div id="full-list" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+    <div id="full-list" class="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 pb-16">
         <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-            <div class="px-6 py-4 bg-gray-50 border-b">
+            <div class="px-2 sm:px-6 py-4 bg-gray-50 border-b flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <h3 class="text-lg font-bold text-gray-900">القائمة الكاملة للمستأجرين</h3>
             </div>
-            
+            <!-- Stylish filter/search bar -->
+            <div class="px-2 sm:px-6 py-4 bg-blue-50 border-b flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <form method="get" class="flex flex-col md:flex-row gap-2 md:gap-4 items-center w-full">
+                    <div class="flex flex-col md:flex-row gap-2 md:gap-4 w-full md:w-auto">
+                        <select name="full_filter_housing_type" class="px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-500 bg-white text-gray-700 w-full md:w-auto">
+                            <option value="">كل أنواع السكن</option>
+                            <?php foreach ($admin_housing_types as $type): ?>
+                                <option value="<?php echo htmlspecialchars($type['name']); ?>" <?php echo $filter_housing_type === $type['name'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($type['name']); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <input type="text" name="full_search" placeholder="بحث بالاسم أو الهاتف أو البريد أو الهوية" value="<?php echo htmlspecialchars($search_query); ?>" class="px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-500 bg-white text-gray-700 w-full md:w-64" />
+                    </div>
+                    <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold transition flex items-center gap-2">
+                        <i class="fas fa-search"></i> بحث
+                    </button>
+                </form>
+            </div>
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
+                <table class="min-w-full divide-y divide-gray-200 text-xs sm:text-sm">
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الاسم</th>
@@ -228,6 +274,7 @@ $stats = $stats_stmt->fetch();
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">البريد الإلكتروني</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">رقم الهوية</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">نوع السكن</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">إجمالي الإيجار</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">تاريخ البداية</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">تاريخ النهاية</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الحالة</th>
@@ -235,7 +282,7 @@ $stats = $stats_stmt->fetch();
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        <?php foreach ($tenants as $tenant): ?>
+                        <?php foreach ($full_tenants as $tenant): ?>
                             <?php 
                             $isActive = strtotime($tenant['end_date']) >= time();
                             ?>
@@ -254,7 +301,22 @@ $stats = $stats_stmt->fetch();
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                        <?php echo htmlspecialchars($tenant['house_type']); ?>
+                                        <?php 
+                                            $ht = $tenant['house_type'];
+                                            echo htmlspecialchars(isset($housing_type_map[$ht]) ? $housing_type_map[$ht] : $ht);
+                                        ?>
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <?php 
+                                        $start = new DateTime($tenant['start_date']);
+                                        $end = new DateTime($tenant['end_date']);
+                                        $days = $start->diff($end)->days + 1;
+                                        $days = $days > 0 ? $days : 0;
+                                        $total_rent = $tenant['price_per_day'] * $days;
+                                    ?>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                        <i class="fas fa-money-bill-wave ml-1"></i> <?php echo number_format($total_rent, 2); ?> 
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

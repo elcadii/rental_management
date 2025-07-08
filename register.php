@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
     
-    // التحقق من صحة البيانات
+    // Data validation
     if (empty($name)) {
         $errors['name'] = 'الاسم مطلوب';
     }
@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['confirm_password'] = 'كلمات المرور غير متطابقة';
     }
     
-    // التحقق من وجود البريد الإلكتروني
+    // Check if email exists
     if (empty($errors)) {
         $stmt = $pdo->prepare("SELECT id FROM admins WHERE email = ?");
         $stmt->execute([$email]);
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     
-    // إنشاء الحساب
+    // Create account
     if (empty($errors)) {
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         $stmt = $pdo->prepare("INSERT INTO admins (name, email, password) VALUES (?, ?, ?)");
@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body class="bg-gray-50 font-arabic">
-    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="min-h-screen flex items-center justify-center py-8 px-2 sm:px-4 lg:px-8">
         <div class="max-w-md w-full space-y-8">
             <div>
                 <h2 class="mt-6 text-center text-3xl font-bold text-gray-900">
@@ -159,17 +159,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         document.getElementById('registerForm').addEventListener('submit', function(e) {
             let isValid = true;
             
-            // مسح الأخطاء السابقة
+            // Clear previous errors
             document.querySelectorAll('[id$="-error"]').forEach(el => el.textContent = '');
             
-            // التحقق من الاسم
+            // Validate name
             const name = document.getElementById('name').value.trim();
             if (!name) {
                 document.getElementById('name-error').textContent = 'الاسم مطلوب';
                 isValid = false;
             }
             
-            // التحقق من البريد الإلكتروني
+            // Validate email
             const email = document.getElementById('email').value.trim();
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!email) {
@@ -180,7 +180,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 isValid = false;
             }
             
-            // التحقق من كلمة المرور
+            // Validate password
             const password = document.getElementById('password').value;
             if (!password) {
                 document.getElementById('password-error').textContent = 'كلمة المرور مطلوبة';
@@ -190,7 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 isValid = false;
             }
             
-            // التحقق من تأكيد كلمة المرور
+            // Validate confirm password
             const confirmPassword = document.getElementById('confirm_password').value;
             if (password !== confirmPassword) {
                 document.getElementById('confirm_password-error').textContent = 'كلمات المرور غير متطابقة';

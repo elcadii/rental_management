@@ -1,10 +1,10 @@
 <?php
 require_once 'config/db.php';
 
-// تدمير الجلسة
+// Destroy the session
 session_destroy();
 
-// إعادة التوجيه إلى صفحة تسجيل الدخول
+// Redirect to login page
 header('Location: login.php');
 exit();
 ?>

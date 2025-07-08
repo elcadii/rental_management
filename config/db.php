@@ -1,5 +1,5 @@
 <?php
-// إعدادات قاعدة البيانات
+// Database settings
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'rental_management');
 define('DB_USER', 'root');
@@ -17,20 +17,20 @@ try {
         ]
     );
 } catch (PDOException $e) {
-    die("خطأ في الاتصال بقاعدة البيانات: " . $e->getMessage());
+    die("Database connection error: " . $e->getMessage());
 }
 
-// بدء الجلسة
+// Start session
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// دالة للتحقق من تسجيل الدخول
+// Function to check if user is logged in
 function isLoggedIn() {
     return isset($_SESSION['admin_id']) && !empty($_SESSION['admin_id']);
 }
 
-// دالة لإعادة التوجيه إذا لم يكن مسجل الدخول
+// Function to redirect if not logged in
 function requireLogin() {
     if (!isLoggedIn()) {
         header('Location: login.php');
@@ -38,7 +38,7 @@ function requireLogin() {
     }
 }
 
-// دالة لتنظيف البيانات
+// Function to sanitize data
 function sanitize($data) {
     return htmlspecialchars(strip_tags(trim($data)));
 }

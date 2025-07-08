@@ -1,7 +1,7 @@
 <?php
 require_once 'config/db.php';
 
-// إعادة توجيه إذا كان مسجل الدخول بالفعل
+// Redirect if already logged in
 if (isLoggedIn()) {
     header('Location: dashboard.php');
     exit();
@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </style>
 </head>
 <body class="bg-gray-50">
-    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="min-h-screen flex items-center justify-center py-8 px-2 sm:px-4 lg:px-8">
         <div class="max-w-md w-full space-y-8">
             <div>
                 <h2 class="mt-6 text-center text-3xl font-bold text-gray-900">
@@ -110,10 +110,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             let isValid = true;
             
-            // مسح الأخطاء السابقة
+            // Clear previous errors
             document.querySelectorAll('[id$="-error"]').forEach(el => el.textContent = '');
             
-            // التحقق من البريد الإلكتروني
+            // Validate email
             const email = document.getElementById('email').value.trim();
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!email) {
@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 isValid = false;
             }
             
-            // التحقق من كلمة المرور
+            // Validate password
             const password = document.getElementById('password').value;
             if (!password) {
                 document.getElementById('password-error').textContent = 'كلمة المرور مطلوبة';
