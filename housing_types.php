@@ -51,6 +51,8 @@ $stmt->execute([$_SESSION['admin_id']]);
 $admin_housing_types = $stmt->fetchAll();
 ?>
 <?php include 'header.php'; ?>
+<?php include 'sidebar.php'; ?>
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>

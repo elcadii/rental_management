@@ -16,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = sanitize($_POST['email'] ?? '');
     $cin = sanitize($_POST['cin'] ?? '');
     $house_type = sanitize($_POST['house_type'] ?? '');
+    $marital_status = sanitize($_POST['marital_status'] ?? '');
     $start_date = sanitize($_POST['start_date'] ?? '');
     $end_date = sanitize($_POST['end_date'] ?? '');
     $price_per_day = isset($_POST['pricePerDay']) ? floatval($_POST['pricePerDay']) : '';
@@ -41,6 +42,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['house_type'] = 'نوع السكن مطلوب';
     }
     
+    if (empty($marital_status)) {
+        $errors['marital_status'] = 'الحالة الاجتماعية مطلوبة';
+    }
+    
     if (empty($start_date)) {
         $errors['start_date'] = 'تاريخ بداية الإيجار مطلوب';
     }
@@ -60,17 +65,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     
+    // Calculate total rent (exclusive)
+    $total_rent = null;
+    if (!empty($start_date) && !empty($end_date) && $price_per_day > 0) {
+        $start = new DateTime($start_date);
+        $end = new DateTime($end_date);
+        $days = $start->diff($end)->days; // exclusive
+        if ($days > 0) {
+            $total_rent = $days * $price_per_day;
+        }
+    }
+    
     // Add tenant
     if (empty($errors)) {
         $stmt = $pdo->prepare("
-            INSERT INTO tenants (full_name, phone, email, cin, house_type, start_date, end_date, price_per_day, admin_id) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO tenants (full_name, phone, email, cin, house_type, marital_status, start_date, end_date, price_per_day, total_rent, admin_id) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
         
-        if ($stmt->execute([$full_name, $phone, $email ?: null, $cin, $house_type, $start_date, $end_date, $price_per_day, $_SESSION['admin_id']])) {
+        if ($stmt->execute([$full_name, $phone, $email ?: null, $cin, $house_type, $marital_status, $start_date, $end_date, $price_per_day, $total_rent, $_SESSION['admin_id']])) {
             $success = 'تم إضافة المستأجر بنجاح!';
             // Clear data after successful addition
-            $full_name = $phone = $email = $cin = $house_type = $start_date = $end_date = $price_per_day = '';
+            $full_name = $phone = $email = $cin = $house_type = $marital_status = $start_date = $end_date = $price_per_day = '';
         } else {
             $errors['general'] = 'حدث خطأ أثناء إضافة المستأجر';
         }
@@ -78,6 +94,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 <?php include 'header.php'; ?>
+<?php include 'sidebar.php'; ?>
+
 
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -213,6 +231,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </div>
                     
+                    <!-- الحالة الاجتماعية -->
+                    <div>
+                        <label for="marital_status" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-ring ml-1"></i>
+                            الحالة الاجتماعية
+                        </label>
+                        <select name="marital_status" id="marital_status" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                            <option value="">اختر الحالة الاجتماعية</option>
+                            <option value="Single" <?php echo ($marital_status ?? '') === 'Single' ? 'selected' : ''; ?>>أعزب</option>
+                            <option value="Married" <?php echo ($marital_status ?? '') === 'Married' ? 'selected' : ''; ?>>متزوج</option>
+                            <option value="Family" <?php echo ($marital_status ?? '') === 'Family' ? 'selected' : ''; ?>>عائلة</option>
+                        </select>
+                        <div id="marital_status-error" class="text-red-500 text-sm mt-1">
+                            <?php echo $errors['marital_status'] ?? ''; ?>
+                        </div>
+                    </div>
+                    
                     <!-- تاريخ البداية -->
                     <div>
                         <label for="start_date" class="block text-sm font-medium text-gray-700 mb-2">
@@ -338,6 +374,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 isValid = false;
             }
             
+            // Validate marital status
+            const maritalStatus = document.getElementById('marital_status').value;
+            if (!maritalStatus) {
+                document.getElementById('marital_status-error').textContent = 'الحالة الاجتماعية مطلوبة';
+                isValid = false;
+            }
+            
             // Validate start date
             const startDate = document.getElementById('start_date').value;
             if (!startDate) {
@@ -389,7 +432,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (startDate && endDate) {
                 const start = new Date(startDate);
                 const end = new Date(endDate);
-                days = Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
+                days = Math.floor((end - start) / (1000 * 60 * 60 * 24)); // exclusive
                 if (days > 0 && !isNaN(pricePerDay) && pricePerDay > 0) {
                     total = days * pricePerDay;
                 }
