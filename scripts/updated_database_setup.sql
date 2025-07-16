@@ -154,6 +154,12 @@ ALTER TABLE `housing_types`
 ALTER TABLE `tenants`
   ADD COLUMN `total_rent` decimal(12,2) DEFAULT NULL AFTER `price_per_day`;
 
+-- Migration: Allow registration with email or phone for admins
+ALTER TABLE admins
+  ADD COLUMN phone VARCHAR(20) UNIQUE DEFAULT NULL,
+  MODIFY email VARCHAR(100) UNIQUE DEFAULT NULL;
+-- End migration
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

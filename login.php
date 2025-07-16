@@ -10,11 +10,11 @@ if (isLoggedIn()) {
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = sanitize($_POST['email'] ?? '');
+    $email_or_phone = sanitize($_POST['email_or_phone'] ?? '');
     $password = $_POST['password'] ?? '';
     
-    if (empty($email)) {
-        $errors['email'] = 'البريد الإلكتروني مطلوب';
+    if (empty($email_or_phone)) {
+        $errors['email_or_phone'] = 'البريد الإلكتروني أو رقم الهاتف مطلوب';
     }
     
     if (empty($password)) {
@@ -22,19 +22,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     if (empty($errors)) {
-        $stmt = $pdo->prepare("SELECT id, name, email, password FROM admins WHERE email = ?");
-        $stmt->execute([$email]);
+        $stmt = $pdo->prepare("SELECT id, name, email, phone, password FROM admins WHERE (email = ? OR phone = ?)");
+        $stmt->execute([$email_or_phone, $email_or_phone]);
         $admin = $stmt->fetch();
         
         if ($admin && password_verify($password, $admin['password'])) {
             $_SESSION['admin_id'] = $admin['id'];
             $_SESSION['admin_name'] = $admin['name'];
             $_SESSION['admin_email'] = $admin['email'];
+            $_SESSION['admin_phone'] = $admin['phone'];
             
             header('Location: index.php');
             exit();
         } else {
-            $errors['general'] = 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
+            $errors['general'] = 'البريد الإلكتروني أو رقم الهاتف أو كلمة المرور غير صحيحة';
         }
     }
 }
@@ -76,12 +77,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <form class="mt-8 space-y-6" method="POST" id="loginForm">
                 <div class="space-y-4">
                     <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700">البريد الإلكتروني</label>
-                        <input id="email" name="email" type="email" required 
+                        <label for="email_or_phone" class="block text-sm font-medium text-gray-700">البريد الإلكتروني أو رقم الهاتف</label>
+                        <input id="email_or_phone" name="email_or_phone" type="text" required 
                                class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                               placeholder="أدخل بريدك الإلكتروني" value="<?php echo htmlspecialchars($email ?? ''); ?>">
-                        <div id="email-error" class="text-red-500 text-sm mt-1">
-                            <?php echo $errors['email'] ?? ''; ?>
+                               placeholder="أدخل بريدك الإلكتروني أو رقم هاتفك" value="<?php echo htmlspecialchars($email_or_phone ?? ''); ?>">
+                        <div id="email_or_phone-error" class="text-red-500 text-sm mt-1">
+                            <?php echo $errors['email_or_phone'] ?? ''; ?>
                         </div>
                     </div>
                     
@@ -113,14 +114,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Clear previous errors
             document.querySelectorAll('[id$="-error"]').forEach(el => el.textContent = '');
             
-            // Validate email
-            const email = document.getElementById('email').value.trim();
+            // Validate email or phone
+            const emailOrPhone = document.getElementById('email_or_phone').value.trim();
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!email) {
-                document.getElementById('email-error').textContent = 'البريد الإلكتروني مطلوب';
+            const phoneRegex = /^\+?\d{8,15}$/;
+            if (!emailOrPhone) {
+                document.getElementById('email_or_phone-error').textContent = 'البريد الإلكتروني أو رقم الهاتف مطلوب';
                 isValid = false;
-            } else if (!emailRegex.test(email)) {
-                document.getElementById('email-error').textContent = 'البريد الإلكتروني غير صحيح';
+            } else if (!emailRegex.test(emailOrPhone) && !phoneRegex.test(emailOrPhone)) {
+                document.getElementById('email_or_phone-error').textContent = 'يرجى إدخال بريد إلكتروني أو رقم هاتف صحيح';
                 isValid = false;
             }
             

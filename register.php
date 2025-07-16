@@ -6,19 +6,26 @@ $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = sanitize($_POST['name'] ?? '');
-    $email = sanitize($_POST['email'] ?? '');
+    $email_or_phone = sanitize($_POST['email_or_phone'] ?? '');
     $password = $_POST['password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
     
-    // Data validation
-    if (empty($name)) {
-        $errors['name'] = 'الاسم مطلوب';
+    $email = null;
+    $phone = null;
+    
+    // Determine if input is email or phone
+    if (empty($email_or_phone)) {
+        $errors['email_or_phone'] = 'البريد الإلكتروني أو رقم الهاتف مطلوب';
+    } elseif (filter_var($email_or_phone, FILTER_VALIDATE_EMAIL)) {
+        $email = $email_or_phone;
+    } elseif (preg_match('/^\+?\d{8,15}$/', $email_or_phone)) {
+        $phone = $email_or_phone;
+    } else {
+        $errors['email_or_phone'] = 'يرجى إدخال بريد إلكتروني أو رقم هاتف صحيح';
     }
     
-    if (empty($email)) {
-        $errors['email'] = 'البريد الإلكتروني مطلوب';
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors['email'] = 'البريد الإلكتروني غير صحيح';
+    if (empty($name)) {
+        $errors['name'] = 'الاسم مطلوب';
     }
     
     if (empty($password)) {
@@ -31,23 +38,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['confirm_password'] = 'كلمات المرور غير متطابقة';
     }
     
-    // Check if email exists
+    // Check if email or phone exists
     if (empty($errors)) {
-        $stmt = $pdo->prepare("SELECT id FROM admins WHERE email = ?");
-        $stmt->execute([$email]);
-        if ($stmt->fetch()) {
-            $errors['email'] = 'البريد الإلكتروني مستخدم بالفعل';
+        if ($email) {
+            $stmt = $pdo->prepare("SELECT id FROM admins WHERE email = ?");
+            $stmt->execute([$email]);
+            if ($stmt->fetch()) {
+                $errors['email_or_phone'] = 'البريد الإلكتروني مستخدم بالفعل';
+            }
+        }
+        if ($phone) {
+            $stmt = $pdo->prepare("SELECT id FROM admins WHERE phone = ?");
+            $stmt->execute([$phone]);
+            if ($stmt->fetch()) {
+                $errors['email_or_phone'] = 'رقم الهاتف مستخدم بالفعل';
+            }
         }
     }
     
     // Create account
     if (empty($errors)) {
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $pdo->prepare("INSERT INTO admins (name, email, password) VALUES (?, ?, ?)");
-        
-        if ($stmt->execute([$name, $email, $hashed_password])) {
+        $stmt = $pdo->prepare("INSERT INTO admins (name, email, phone, password) VALUES (?, ?, ?, ?)");
+        if ($stmt->execute([$name, $email, $phone, $hashed_password])) {
             $success = 'تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.';
             header('Location: login.php');
+            exit();
         } else {
             $errors['general'] = 'حدث خطأ أثناء إنشاء الحساب';
         }
@@ -115,12 +131,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     
                     <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700">البريد الإلكتروني</label>
-                        <input id="email" name="email" type="email" required 
+                        <label for="email_or_phone" class="block text-sm font-medium text-gray-700">البريد الإلكتروني أو رقم الهاتف</label>
+                        <input id="email_or_phone" name="email_or_phone" type="text" required 
                                class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                               placeholder="أدخل بريدك الإلكتروني" value="<?php echo htmlspecialchars($email ?? ''); ?>">
-                        <div id="email-error" class="text-red-500 text-sm mt-1">
-                            <?php echo $errors['email'] ?? ''; ?>
+                               placeholder="أدخل بريدك الإلكتروني أو رقم هاتفك" value="<?php echo htmlspecialchars($email_or_phone ?? ''); ?>">
+                        <div id="email_or_phone-error" class="text-red-500 text-sm mt-1">
+                            <?php echo $errors['email_or_phone'] ?? ''; ?>
                         </div>
                     </div>
                     
@@ -169,14 +185,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 isValid = false;
             }
             
-            // Validate email
-            const email = document.getElementById('email').value.trim();
+            // Validate email or phone
+            const emailOrPhone = document.getElementById('email_or_phone').value.trim();
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!email) {
-                document.getElementById('email-error').textContent = 'البريد الإلكتروني مطلوب';
+            const phoneRegex = /^\+?\d{8,15}$/;
+            if (!emailOrPhone) {
+                document.getElementById('email_or_phone-error').textContent = 'البريد الإلكتروني أو رقم الهاتف مطلوب';
                 isValid = false;
-            } else if (!emailRegex.test(email)) {
-                document.getElementById('email-error').textContent = 'البريد الإلكتروني غير صحيح';
+            } else if (!emailRegex.test(emailOrPhone) && !phoneRegex.test(emailOrPhone)) {
+                document.getElementById('email_or_phone-error').textContent = 'يرجى إدخال بريد إلكتروني أو رقم هاتف صحيح';
                 isValid = false;
             }
             
