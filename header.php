@@ -9,7 +9,9 @@ $admin_name = isset($_SESSION['admin_name']) ? $_SESSION['admin_name'] : '';
             <span class="text-xl font-bold text-gray-900">نظام الإيجارات</span>
         </div> -->
         <div class="flex items-center gap-4">
-            <span class="text-gray-700 font-medium hidden sm:inline"><i class="fas fa-user-circle text-blue-500 ml-1"></i><?php echo htmlspecialchars($admin_name); ?></span>
+            <a href="profile.php" style="text-decoration:none">
+                <span class="text-gray-700 font-medium hidden sm:inline"><i class="fas fa-user-circle text-blue-500 ml-1"></i><?php echo htmlspecialchars($admin_name); ?></span>
+            </a>
             <a href="logout.php" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-200 flex items-center">
                 <i class="fas fa-sign-out-alt ml-1"></i>
                 تسجيل الخروج
