@@ -2,7 +2,7 @@
 $current = basename($_SERVER['PHP_SELF']);
 $nav = [
     [
-        'file' => 'index.php',
+        'file' => 'dashboard.php',
         'label' => 'الرئيسية',
         'icon' => 'fa-home',
     ],

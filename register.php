@@ -1,5 +1,6 @@
 <?php
 require_once 'config/db.php';
+require_once 'includes/trial_manager.php';
 
 $errors = [];
 $success = '';
@@ -61,6 +62,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         $stmt = $pdo->prepare("INSERT INTO admins (name, email, phone, password) VALUES (?, ?, ?, ?)");
         if ($stmt->execute([$name, $email, $phone, $hashed_password])) {
+            $admin_id = $pdo->lastInsertId();
+            
+            // Start trial for new user
+            $trial_manager = new TrialManager($pdo);
+            $trial_manager->startTrial($admin_id);
+            
             $success = 'تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.';
             header('Location: login.php');
             exit();

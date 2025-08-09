@@ -1,9 +1,10 @@
 <?php
 require_once 'config/db.php';
+require_once 'includes/trial_manager.php';
 
 // Redirect if already logged in
 if (isLoggedIn()) {
-    header('Location: index.php');
+    header('Location: dashboard.php');
     exit();
 }
 
@@ -27,13 +28,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $admin = $stmt->fetch();
         
         if ($admin && password_verify($password, $admin['password'])) {
-            $_SESSION['admin_id'] = $admin['id'];
-            $_SESSION['admin_name'] = $admin['name'];
-            $_SESSION['admin_email'] = $admin['email'];
-            $_SESSION['admin_phone'] = $admin['phone'];
+            // Check trial status
+            $trial_manager = new TrialManager($pdo);
+            $trial_info = $trial_manager->getTrialInfo($admin['id']);
             
-            header('Location: index.php');
-            exit();
+            // If trial has expired, show upgrade message
+            if ($trial_info && $trial_info['is_expired']) {
+                $errors['general'] = 'انتهت فترة التجربة المجانية. يرجى ترقية حسابك للاستمرار.';
+            } else {
+                $_SESSION['admin_id'] = $admin['id'];
+                $_SESSION['admin_name'] = $admin['name'];
+                $_SESSION['admin_email'] = $admin['email'];
+                $_SESSION['admin_phone'] = $admin['phone'];
+                
+                header('Location: dashboard.php');
+                exit();
+            }
         } else {
             $errors['general'] = 'البريد الإلكتروني أو رقم الهاتف أو كلمة المرور غير صحيحة';
         }

@@ -15,6 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $phone = sanitize($_POST['phone'] ?? '');
     $email = sanitize($_POST['email'] ?? '');
     $cin = sanitize($_POST['cin'] ?? '');
+    $address = sanitize($_POST['address'] ?? '');
     $house_type = sanitize($_POST['house_type'] ?? '');
     $marital_status = sanitize($_POST['marital_status'] ?? '');
     $start_date = sanitize($_POST['start_date'] ?? '');
@@ -36,6 +37,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     if (empty($cin)) {
         $errors['cin'] = 'رقم الهوية مطلوب';
+    }
+    
+    if (empty($address)) {
+        $errors['address'] = 'العنوان مطلوب';
     }
     
     if (empty($house_type)) {
@@ -79,14 +84,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Add tenant
     if (empty($errors)) {
         $stmt = $pdo->prepare("
-            INSERT INTO tenants (full_name, phone, email, cin, house_type, marital_status, start_date, end_date, price_per_day, total_rent, admin_id) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO tenants (full_name, phone, email, cin, address, house_type, marital_status, start_date, end_date, price_per_day, total_rent, admin_id) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
         
-        if ($stmt->execute([$full_name, $phone, $email ?: null, $cin, $house_type, $marital_status, $start_date, $end_date, $price_per_day, $total_rent, $_SESSION['admin_id']])) {
+        if ($stmt->execute([$full_name, $phone, $email ?: null, $cin, $address, $house_type, $marital_status, $start_date, $end_date, $price_per_day, $total_rent, $_SESSION['admin_id']])) {
             $success = 'تم إضافة المستأجر بنجاح!';
             // Clear data after successful addition
-            $full_name = $phone = $email = $cin = $house_type = $marital_status = $start_date = $end_date = $price_per_day = '';
+            $full_name = $phone = $email = $cin = $address = $house_type = $marital_status = $start_date = $end_date = $price_per_day = '';
         } else {
             $errors['general'] = 'حدث خطأ أثناء إضافة المستأجر';
         }
@@ -210,6 +215,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </div>
                     
+                    <!-- العنوان -->
+                    <div class="sm:col-span-2">
+                        <label for="address" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-map-marker-alt ml-1"></i>
+                            العنوان
+                        </label>
+                        <textarea name="address" id="address" required rows="3"
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                                  placeholder="أدخل العنوان الكامل للمستأجر"
+                                  ><?php echo htmlspecialchars($address ?? ''); ?></textarea>
+                        <div id="address-error" class="text-red-500 text-sm mt-1">
+                            <?php echo $errors['address'] ?? ''; ?>
+                        </div>
+                    </div>
+                    
                     <!-- نوع السكن -->
                     <div>
                         <label for="house_type" class="block text-sm font-medium text-gray-700 mb-2">
@@ -314,7 +334,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 <!-- أزرار الإجراءات -->
                 <div class="mt-8 flex justify-end space-x-4 space-x-reverse">
-                    <a href="index.php" 
+                    <a href="dashboard.php" 
                        class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition duration-200">
                         <i class="fas fa-times ml-1"></i>
                         إلغاء
@@ -364,6 +384,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             const cin = document.getElementById('cin').value.trim();
             if (!cin) {
                 document.getElementById('cin-error').textContent = 'رقم الهوية مطلوب';
+                isValid = false;
+            }
+            
+            // Validate address
+            const address = document.getElementById('address').value.trim();
+            if (!address) {
+                document.getElementById('address-error').textContent = 'العنوان مطلوب';
                 isValid = false;
             }
             

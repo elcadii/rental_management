@@ -10,7 +10,7 @@ $stmt->execute([$tenant_id, $_SESSION['admin_id']]);
 $tenant = $stmt->fetch();
 
 if (!$tenant) {
-    header('Location: index.php');
+    header('Location: dashboard.php');
     exit();
 }
 
@@ -22,6 +22,6 @@ if ($stmt->execute([$tenant_id, $_SESSION['admin_id']])) {
     $_SESSION['error_message'] = 'حدث خطأ أثناء حذف المستأجر';
 }
 
-header('Location: index.php');
+header('Location: dashboard.php');
 exit();
 ?>

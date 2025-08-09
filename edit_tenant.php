@@ -12,7 +12,7 @@ $stmt->execute([$tenant_id, $_SESSION['admin_id']]);
 $tenant = $stmt->fetch();
 
 if (!$tenant) {
-    header('Location: index.php');
+    header('Location: dashboard.php');
     exit();
 }
 
@@ -28,6 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $phone = sanitize($_POST['phone'] ?? '');
     $email = sanitize($_POST['email'] ?? '');
     $cin = sanitize($_POST['cin'] ?? '');
+    $address = sanitize($_POST['address'] ?? '');
     $house_type = sanitize($_POST['house_type'] ?? '');
     $marital_status = sanitize($_POST['marital_status'] ?? '');
     $start_date = sanitize($_POST['start_date'] ?? '');
@@ -49,6 +50,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     if (empty($cin)) {
         $errors['cin'] = 'رقم الهوية مطلوب';
+    }
+    
+    if (empty($address)) {
+        $errors['address'] = 'العنوان مطلوب';
     }
     
     if (empty($house_type)) {
@@ -93,17 +98,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($errors)) {
         $stmt = $pdo->prepare("
             UPDATE tenants 
-            SET full_name = ?, phone = ?, email = ?, cin = ?, house_type = ?, marital_status = ?, start_date = ?, end_date = ?, price_per_day = ?, total_rent = ?
+            SET full_name = ?, phone = ?, email = ?, cin = ?, address = ?, house_type = ?, marital_status = ?, start_date = ?, end_date = ?, price_per_day = ?, total_rent = ?
             WHERE id = ? AND admin_id = ?
         ");
         
-        if ($stmt->execute([$full_name, $phone, $email ?: null, $cin, $house_type, $marital_status, $start_date, $end_date, $price_per_day, $total_rent, $tenant_id, $_SESSION['admin_id']])) {
+        if ($stmt->execute([$full_name, $phone, $email ?: null, $cin, $address, $house_type, $marital_status, $start_date, $end_date, $price_per_day, $total_rent, $tenant_id, $_SESSION['admin_id']])) {
             $success = 'تم تحديث بيانات المستأجر بنجاح!';
             // Update displayed data
             $tenant['full_name'] = $full_name;
             $tenant['phone'] = $phone;
             $tenant['email'] = $email;
             $tenant['cin'] = $cin;
+            $tenant['address'] = $address;
             $tenant['house_type'] = $house_type;
             $tenant['marital_status'] = $marital_status;
             $tenant['start_date'] = $start_date;
@@ -229,6 +235,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </div>
                     
+                    <!-- العنوان -->
+                    <div class="sm:col-span-2">
+                        <label for="address" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-map-marker-alt ml-1"></i>
+                            العنوان
+                        </label>
+                        <textarea name="address" id="address" required rows="3"
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                                  placeholder="أدخل العنوان الكامل للمستأجر"
+                                  ><?php echo htmlspecialchars($tenant['address'] ?? ''); ?></textarea>
+                        <div id="address-error" class="text-red-500 text-sm mt-1">
+                            <?php echo $errors['address'] ?? ''; ?>
+                        </div>
+                    </div>
+                    
                     <!-- نوع السكن -->
                     <div>
                         <label for="house_type" class="block text-sm font-medium text-gray-700 mb-2">
@@ -331,7 +352,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 <!-- أزرار الإجراءات -->
                 <div class="mt-8 flex justify-end space-x-4 space-x-reverse">
-                    <a href="index.php" 
+                    <a href="dashboard.php" 
                        class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition duration-200">
                         <i class="fas fa-times ml-1"></i>
                         إلغاء
@@ -381,6 +402,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             const cin = document.getElementById('cin').value.trim();
             if (!cin) {
                 document.getElementById('cin-error').textContent = 'رقم الهوية مطلوب';
+                isValid = false;
+            }
+            
+            // التحقق من العنوان
+            const address = document.getElementById('address').value.trim();
+            if (!address) {
+                document.getElementById('address-error').textContent = 'العنوان مطلوب';
                 isValid = false;
             }
             

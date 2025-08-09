@@ -17,16 +17,16 @@ foreach ($admin_housing_types as $type) {
 // Prepare filters for full tenant list
 $filter_housing_type = isset($_GET['full_filter_housing_type']) ? $_GET['full_filter_housing_type'] : '';
 $search_query = isset($_GET['full_search']) ? trim($_GET['full_search']) : '';
-$full_tenants_query = "SELECT id, full_name, phone, email, cin, house_type, marital_status , total_rent , start_date, end_date, created_at, price_per_day FROM tenants WHERE admin_id = ?";
+$full_tenants_query = "SELECT id, full_name, phone, email, cin, address, house_type, marital_status , total_rent , start_date, end_date, created_at, price_per_day FROM tenants WHERE admin_id = ?";
 $full_params = [$_SESSION['admin_id']];
 if ($filter_housing_type !== '') {
     $full_tenants_query .= " AND house_type = ?";
     $full_params[] = $filter_housing_type;
 }
 if ($search_query !== '') {
-    $full_tenants_query .= " AND (full_name LIKE ? OR phone LIKE ? OR email LIKE ? OR cin LIKE ?)";
+    $full_tenants_query .= " AND (full_name LIKE ? OR phone LIKE ? OR email LIKE ? OR cin LIKE ? OR address LIKE ?)";
     $search_term = "%$search_query%";
-    $full_params = array_merge($full_params, [$search_term, $search_term, $search_term, $search_term]);
+    $full_params = array_merge($full_params, [$search_term, $search_term, $search_term, $search_term, $search_term]);
 }
 $full_tenants_query .= " ORDER BY created_at DESC";
 $full_stmt = $pdo->prepare($full_tenants_query);
@@ -65,11 +65,23 @@ $full_tenants = $full_stmt->fetchAll();
                                 <option value="<?php echo htmlspecialchars($type['name']); ?>" <?php echo $filter_housing_type === $type['name'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($type['name']); ?></option>
                             <?php endforeach; ?>
                         </select>
-                        <input type="text" name="full_search" placeholder="بحث بالاسم أو الهاتف أو البريد أو الهوية" value="<?php echo htmlspecialchars($search_query); ?>" class="px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-500 bg-white text-gray-700 w-full md:w-64" />
+                        <input type="text" name="full_search" placeholder="بحث بالاسم أو الهاتف أو البريد أو الهوية أو العنوان" value="<?php echo htmlspecialchars($search_query); ?>" class="px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-500 bg-white text-gray-700 w-full md:w-64" />
                     </div>
                     <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold transition flex items-center gap-2">
                         <i class="fas fa-search"></i> بحث
                     </button>
+                    <a href="export_tenants_excel.php?full_filter_housing_type=<?php echo urlencode($filter_housing_type); ?>&full_search=<?php echo urlencode($search_query); ?>" 
+                       class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold transition flex items-center gap-2">
+                        <i class="fas fa-file-excel"></i> تصدير Excel
+                    </a>
+                    <!-- <a href="export_tenants_pdf.php?full_filter_housing_type=<?php echo urlencode($filter_housing_type); ?>&full_search=<?php echo urlencode($search_query); ?>" 
+                       class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-semibold transition flex items-center gap-2">
+                        <i class="fas fa-file-pdf"></i> تصدير PDF
+                    </a> -->
+                    <!-- <a href="export_tenants.php?full_filter_housing_type=<?php echo urlencode($filter_housing_type); ?>&full_search=<?php echo urlencode($search_query); ?>" 
+                       class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold transition flex items-center gap-2">
+                        <i class="fas fa-file-csv"></i> تصدير CSV
+                    </a> -->
                 </form>
             </div>
             <div class="overflow-x-auto">
@@ -80,6 +92,7 @@ $full_tenants = $full_stmt->fetchAll();
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الهاتف</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">البريد الإلكتروني</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">رقم الهوية</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">العنوان</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">نوع السكن</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الحالة الاجتماعية</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">إجمالي الإيجار</th>
@@ -106,6 +119,9 @@ $full_tenants = $full_stmt->fetchAll();
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     <?php echo htmlspecialchars($tenant['cin']); ?>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <?php echo htmlspecialchars($tenant['address'] ?? 'غير محدد'); ?>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
