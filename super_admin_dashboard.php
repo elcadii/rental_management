@@ -1,6 +1,26 @@
 <?php
 require_once 'config/db.php';
-// Optionally, require super admin login here
+
+// Start session
+session_start();
+
+// Check if user is logged in
+if (!isset($_SESSION['admin_id'])) {
+    header('Location: login.php');
+    exit();
+}
+
+// Check if user is super admin
+$admin_id = $_SESSION['admin_id'];
+$stmt = $pdo->prepare("SELECT is_super_admin FROM admins WHERE id = ?");
+$stmt->execute([$admin_id]);
+$admin = $stmt->fetch();
+
+if (!$admin || !$admin['is_super_admin']) {
+    // Not a super admin, redirect to regular dashboard
+    header('Location: dashboard.php');
+    exit();
+}
 
 // System-wide stats
 $total_admins = $pdo->query("SELECT COUNT(*) FROM admins")->fetchColumn();
