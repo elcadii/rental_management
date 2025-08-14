@@ -185,9 +185,11 @@ $full_tenants = $full_stmt->fetchAll();
                     </div>
                 </div>
                 
-                <button class="w-full mt-4 bg-purple-100 text-purple-700 py-2 rounded-lg hover:bg-purple-200 transition duration-200">
+                <a href="profile.php">
+                    <button class="w-full mt-4 bg-purple-100 text-purple-700 py-2 rounded-lg hover:bg-purple-200 transition duration-200">
                     عرض التفاصيل
                 </button>
+                </a>
             </div>
 
             <!-- قسم قائمة المستأجرين -->

@@ -21,13 +21,18 @@ $nav = [
         'label' => 'أنواع السكن',
         'icon' => 'fa-building',
     ],
+     [
+        'file' => 'profile.php' ,
+        'label' => 'حسابي',
+        'icon' => 'fa-user',
+    ],
 ];
 ?>
 <aside class="fixed top-0 right-0 h-full w-64 bg-white border-l border-blue-100 shadow-lg flex flex-col z-40">
     <div class="flex items-center justify-center h-16 border-b border-blue-100">
-        <span class="text-2xl font-extrabold text-blue-700 flex items-center gap-2">
+        <a href="index.php" class="text-2xl font-extrabold text-blue-700 flex items-center gap-2">
             <i class="fas fa-home"></i> نظام الإيجارات
-        </span>
+        </a>
     </div>
     <nav class="flex-1 overflow-y-auto py-4">
         <ul class="space-y-2 px-4">
