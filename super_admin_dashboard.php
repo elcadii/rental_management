@@ -2,7 +2,6 @@
 require_once 'config/db.php';
 
 // Start session
-session_start();
 
 // Check if user is logged in
 if (!isset($_SESSION['admin_id'])) {

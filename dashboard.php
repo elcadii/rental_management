@@ -1,6 +1,7 @@
 <?php
 require_once 'config/db.php';
 require_once 'includes/trial_manager.php';
+require_once 'includes/currency_manager.php';
 requireLogin();
 
 // Initialize trial manager
@@ -98,6 +99,12 @@ $full_tenants_query .= " ORDER BY created_at DESC";
 $full_stmt = $pdo->prepare($full_tenants_query);
 $full_stmt->execute($full_params);
 $full_tenants = $full_stmt->fetchAll();
+
+// Update all financial values to use currency conversion
+$total_rent_mad = $pdo->query("SELECT SUM(total_rent) FROM tenants WHERE admin_id = " . $_SESSION['admin_id'])->fetchColumn() ?: 0;
+$total_rent = convertCurrency($total_rent_mad);
+
+$current_currency = getCurrentCurrency();
 ?>
 
 <?php include 'header.php'; ?>

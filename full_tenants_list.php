@@ -1,5 +1,6 @@
 <?php
 require_once 'config/db.php';
+require_once 'includes/currency_manager.php';
 requireLogin();
 
 // Fetch all housing types for this admin
@@ -17,7 +18,7 @@ foreach ($admin_housing_types as $type) {
 // Prepare filters for full tenant list
 $filter_housing_type = isset($_GET['full_filter_housing_type']) ? $_GET['full_filter_housing_type'] : '';
 $search_query = isset($_GET['full_search']) ? trim($_GET['full_search']) : '';
-$full_tenants_query = "SELECT id, full_name, phone, email, cin, address, house_type, marital_status , total_rent , start_date, end_date, created_at, price_per_day FROM tenants WHERE admin_id = ?";
+$full_tenants_query = "SELECT id, full_name, phone, email, cin, address, house_type, marital_status, total_rent, start_date, end_date, created_at, price_per_day, marriage_contract FROM tenants WHERE admin_id = ?";
 $full_params = [$_SESSION['admin_id']];
 if ($filter_housing_type !== '') {
     $full_tenants_query .= " AND house_type = ?";
@@ -32,6 +33,12 @@ $full_tenants_query .= " ORDER BY created_at DESC";
 $full_stmt = $pdo->prepare($full_tenants_query);
 $full_stmt->execute($full_params);
 $full_tenants = $full_stmt->fetchAll();
+
+// Update all financial values to use currency conversion
+$total_rent_mad = $pdo->query("SELECT SUM(total_rent) FROM tenants WHERE admin_id = " . $_SESSION['admin_id'])->fetchColumn() ?: 0;
+$total_rent = convertCurrency($total_rent_mad);
+
+$current_currency = getCurrentCurrency();
 ?>
 <?php include 'header.php'; ?>
 <?php include 'sidebar.php'; ?>
@@ -84,6 +91,8 @@ $full_tenants = $full_stmt->fetchAll();
                     </a> -->
                 </form>
             </div>
+            <!-- Add currency selector at the top -->
+            <!--  -->
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200 text-xs sm:text-sm">
                     <thead class="bg-gray-50">
@@ -95,6 +104,8 @@ $full_tenants = $full_stmt->fetchAll();
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">العنوان</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">نوع السكن</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الحالة الاجتماعية</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">عقد الزواج</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">سعر اليوم</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">إجمالي الإيجار</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">تاريخ البداية</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">تاريخ النهاية</th>
@@ -135,8 +146,38 @@ $full_tenants = $full_stmt->fetchAll();
                                     <?php echo htmlspecialchars($tenant['marital_status']); ?>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <?php if ($tenant['marital_status'] === 'Married'): ?>
+                                        <?php if (!empty($tenant['marriage_contract']) && file_exists($tenant['marriage_contract'])): ?>
+                                            <div class="flex items-center gap-2">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    <i class="fas fa-file-check ml-1"></i>
+                                                    متوفر
+                                                </span>
+                                                <a href="<?php echo htmlspecialchars($tenant['marriage_contract']); ?>" 
+                                                   target="_blank" 
+                                                   class="text-blue-600 hover:text-blue-800 text-xs underline"
+                                                   title="عرض عقد الزواج">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </div>
+                                        <?php else: ?>
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                <i class="fas fa-file-times ml-1"></i>
+                                                غير متوفر
+                                            </span>
+                                        <?php endif; ?>
+                                    <?php else: ?>
+                                        <span class="text-gray-400 text-xs">-</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                        <i class="fas fa-coins ml-1"></i><?php echo formatCurrency(convertCurrency($tenant['price_per_day'])); ?>
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                        <i class="fas fa-money-bill-wave ml-1"></i><?php echo htmlspecialchars($tenant['total_rent']); ?>
+                                        <i class="fas fa-money-bill-wave ml-1"></i><?php echo formatCurrency(convertCurrency($tenant['total_rent'])); ?>
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

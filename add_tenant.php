@@ -1,5 +1,6 @@
 <?php
 require_once 'config/db.php';
+require_once 'includes/currency_manager.php';
 requireLogin();
 
 $errors = [];
@@ -21,6 +22,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $start_date = sanitize($_POST['start_date'] ?? '');
     $end_date = sanitize($_POST['end_date'] ?? '');
     $price_per_day = isset($_POST['pricePerDay']) ? floatval($_POST['pricePerDay']) : '';
+    
+    // Handle marriage contract upload
+    $marriage_contract_path = null;
+    if ($marital_status === 'Married' && isset($_FILES['marriage_contract']) && $_FILES['marriage_contract']['error'] === UPLOAD_ERR_OK) {
+        $upload_dir = 'uploads/marriage_contracts/';
+        if (!is_dir($upload_dir)) {
+            mkdir($upload_dir, 0755, true);
+        }
+        
+        $file_extension = strtolower(pathinfo($_FILES['marriage_contract']['name'], PATHINFO_EXTENSION));
+        $allowed_extensions = ['jpg', 'jpeg', 'png', 'pdf'];
+        
+        if (in_array($file_extension, $allowed_extensions)) {
+            $new_filename = uniqid() . '_' . time() . '.' . $file_extension;
+            $upload_path = $upload_dir . $new_filename;
+            
+            if (move_uploaded_file($_FILES['marriage_contract']['tmp_name'], $upload_path)) {
+                $marriage_contract_path = $upload_path;
+            } else {
+                $errors['marriage_contract'] = 'فشل في رفع الملف';
+            }
+        } else {
+            $errors['marriage_contract'] = 'نوع الملف غير مسموح به';
+        }
+    } elseif ($marital_status === 'Married') {
+        // If married but no file uploaded, show error
+        $errors['marriage_contract'] = 'عقد الزواج مطلوب للمتزوجين';
+    }
     
     // Data validation
     if (empty($full_name)) {
@@ -84,11 +113,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Add tenant
     if (empty($errors)) {
         $stmt = $pdo->prepare("
-            INSERT INTO tenants (full_name, phone, email, cin, address, house_type, marital_status, start_date, end_date, price_per_day, total_rent, admin_id) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO tenants (full_name, phone, email, cin, address, house_type, marital_status, start_date, end_date, price_per_day, total_rent, admin_id, marriage_contract) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
         
-        if ($stmt->execute([$full_name, $phone, $email ?: null, $cin, $address, $house_type, $marital_status, $start_date, $end_date, $price_per_day, $total_rent, $_SESSION['admin_id']])) {
+        if ($stmt->execute([$full_name, $phone, $email ?: null, $cin, $address, $house_type, $marital_status, $start_date, $end_date, $price_per_day, $total_rent, $_SESSION['admin_id'], $marriage_contract_path])) {
             $success = 'تم إضافة المستأجر بنجاح!';
             // Clear data after successful addition
             $full_name = $phone = $email = $cin = $address = $house_type = $marital_status = $start_date = $end_date = $price_per_day = '';
@@ -153,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             <?php endif; ?>
             
-            <form method="POST" id="tenantForm" class="p-6">
+            <form method="POST" id="tenantForm" class="p-6" enctype="multipart/form-data">
                 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     <!-- الاسم الكامل -->
                     <div class="sm:col-span-2">
@@ -269,6 +298,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </div>
                     
+                    <!-- حقل رفع عقد الزواج (مخفي افتراضياً) -->
+                    <div id="marriage-upload-wrapper" class="sm:col-span-2 hidden" aria-hidden="true">
+                        <label for="marriage_contract" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-file-upload ml-1"></i>
+                            نسخة من عقد الزواج (صورة أو PDF)
+                        </label>
+                        <input
+                            type="file"
+                            name="marriage_contract"
+                            id="marriage_contract"
+                            accept=".jpg,.jpeg,.png,.pdf,application/pdf"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                        />
+                        <p class="text-xs text-gray-500 mt-1">الملفات المسموحة: JPG, PNG, PDF</p>
+                        <div id="marriage_contract-error" class="text-red-500 text-sm mt-1"></div>
+                    </div>
+                    
                     <!-- تاريخ البداية -->
                     <div>
                         <label for="start_date" class="block text-sm font-medium text-gray-700 mb-2">
@@ -301,7 +347,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div>
                         <label for="pricePerDay" class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-money-bill-wave ml-1"></i>
-                            سعر الإيجار اليومي (بالعملة المحلية)
+                            سعر الإيجار اليومي (<?php echo getCurrentCurrency()['symbol']; ?> <?php echo getCurrentCurrency()['code']; ?>)
                         </label>
                         <input type="number" name="pricePerDay" id="pricePerDay" min="1" step="0.01" required
                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
@@ -350,6 +396,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
     
     <script>
+        // إظهار/إخفاء حقل رفع عقد الزواج بناءً على اختيار الحالة الاجتماعية
+        function setupMarriageContractToggle() {
+            const select = document.getElementById('marital_status');
+            const wrapper = document.getElementById('marriage-upload-wrapper');
+            const input = document.getElementById('marriage_contract');
+
+            if (!select || !wrapper || !input) return;
+
+            function applyToggle() {
+                if (select.value === 'Married') {
+                    wrapper.classList.remove('hidden');
+                    wrapper.setAttribute('aria-hidden', 'false');
+                    input.required = true;
+                } else {
+                    wrapper.classList.add('hidden');
+                    wrapper.setAttribute('aria-hidden', 'true');
+                    input.required = false;
+                    input.value = '';
+                }
+            }
+
+            select.addEventListener('change', applyToggle);
+            // تأكد من الحالة عند تحميل الصفحة
+            document.addEventListener('DOMContentLoaded', applyToggle);
+            applyToggle();
+        }
+
+        // تشغيل الوظيفة عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', setupMarriageContractToggle);
+
         document.getElementById('tenantForm').addEventListener('submit', function(e) {
             let isValid = true;
             
@@ -430,6 +506,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
             
+            // Validate marriage contract for married tenants
+            const marriageContract = document.getElementById('marriage_contract');
+            const marriageContractError = document.getElementById('marriage_contract-error');
+
+            if (maritalStatus === 'Married') {
+                if (!marriageContract.files || marriageContract.files.length === 0) {
+                    marriageContractError.textContent = 'عقد الزواج مطلوب للمتزوجين';
+                    isValid = false;
+                } else {
+                    const file = marriageContract.files[0];
+                    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+                    if (!allowedTypes.includes(file.type)) {
+                        marriageContractError.textContent = 'نوع الملف غير مسموح به. الملفات المسموحة: JPG, PNG, PDF';
+                        isValid = false;
+                    }
+                }
+            }
+            
             if (!isValid) {
                 e.preventDefault();
             }
@@ -457,15 +551,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             let days = 0;
             let total = 0;
             if (startDate && endDate) {
-                const start = new Date(startDate);
-                const end = new Date(endDate);
+                const start = new DateTime(startDate);
+                const end = new DateTime(endDate);
                 days = Math.floor((end - start) / (1000 * 60 * 60 * 24)); // exclusive
                 if (days > 0 && !isNaN(pricePerDay) && pricePerDay > 0) {
                     total = days * pricePerDay;
                 }
             }
             document.getElementById('days-count').textContent = days > 0 ? `عدد الأيام: ${days}` : '';
-            document.getElementById('total-rent').textContent = (days > 0 && total > 0) ? `| إجمالي الإيجار: ${total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : '';
+            document.getElementById('total-rent').textContent = (days > 0 && total > 0) ? `| إجمالي الإيجار: <?php echo getCurrentCurrency()['symbol']; ?> ${total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : '';
         }
         document.getElementById('start_date').addEventListener('input', calculateTotalRent);
         document.getElementById('end_date').addEventListener('input', calculateTotalRent);
