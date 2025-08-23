@@ -52,11 +52,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="<?php echo htmlspecialchars(currentLang()); ?>" dir="<?php echo htmlspecialchars(currentDir()); ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل الدخول - نظام إدارة الإيجارات</title>
+    <title><?php echo __('login.title'); ?> - <?php echo __('app.title'); ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
@@ -67,13 +67,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="min-h-screen flex items-center justify-center py-8 px-2 sm:px-4 lg:px-8">
         <div class="max-w-md w-full space-y-8">
             <div>
-                <h2 class="mt-6 text-center text-3xl font-bold text-gray-900">
-                    تسجيل الدخول
-                </h2>
+                <h2 class="mt-6 text-center text-3xl font-bold text-gray-900"><?php echo __('login.title'); ?></h2>
                 <p class="mt-2 text-center text-sm text-gray-600">
-                    أو
+                    <?php echo __('login.or'); ?>
                     <a href="register.php" class="font-medium text-blue-600 hover:text-blue-500">
-                        أنشئ حساباً جديداً
+                        <?php echo __('login.create_account'); ?>
                     </a>
                 </p>
             </div>
@@ -87,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <form class="mt-8 space-y-6" method="POST" id="loginForm">
                 <div class="space-y-4">
                     <div>
-                        <label for="email_or_phone" class="block text-sm font-medium text-gray-700">البريد الإلكتروني أو رقم الهاتف</label>
+                        <label for="email_or_phone" class="block text-sm font-medium text-gray-700"><?php echo __('login.email_or_phone'); ?></label>
                         <input id="email_or_phone" name="email_or_phone" type="text" required 
                                class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                                placeholder="أدخل بريدك الإلكتروني أو رقم هاتفك" value="<?php echo htmlspecialchars($email_or_phone ?? ''); ?>">
@@ -97,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     
                     <div>
-                        <label for="password" class="block text-sm font-medium text-gray-700">كلمة المرور</label>
+                        <label for="password" class="block text-sm font-medium text-gray-700"><?php echo __('login.password'); ?></label>
                         <input id="password" name="password" type="password" required 
                                class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                                placeholder="أدخل كلمة المرور">
@@ -110,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div>
                     <button type="submit" 
                             class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        تسجيل الدخول
+                        <?php echo __('login.submit'); ?>
                     </button>
                 </div>
             </form>
@@ -129,17 +127,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             const phoneRegex = /^\+?\d{8,15}$/;
             if (!emailOrPhone) {
-                document.getElementById('email_or_phone-error').textContent = 'البريد الإلكتروني أو رقم الهاتف مطلوب';
+                document.getElementById('email_or_phone-error').textContent = '<?php echo __('login.email_or_phone'); ?>';
                 isValid = false;
             } else if (!emailRegex.test(emailOrPhone) && !phoneRegex.test(emailOrPhone)) {
-                document.getElementById('email_or_phone-error').textContent = 'يرجى إدخال بريد إلكتروني أو رقم هاتف صحيح';
+                document.getElementById('email_or_phone-error').textContent = '<?php echo __('errors.invalid_email_or_phone'); ?>';
                 isValid = false;
             }
             
             // Validate password
             const password = document.getElementById('password').value;
             if (!password) {
-                document.getElementById('password-error').textContent = 'كلمة المرور مطلوبة';
+                document.getElementById('password-error').textContent = '<?php echo __('login.password'); ?>';
                 isValid = false;
             }
             

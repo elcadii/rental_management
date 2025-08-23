@@ -1,6 +1,7 @@
 <?php
 require_once 'config/db.php';
 require_once 'includes/currency_manager.php';
+require_once 'includes/i18n.php';
 requireLogin();
 
 // Fetch all housing types for this admin (for mapping)
@@ -47,18 +48,16 @@ echo "\xEF\xBB\xBF";
 
 echo "<table border='1'>";
 echo "<tr>"
-    . "<th>الاسم</th>"
-    . "<th>الهاتف</th>"
-    . "<th>البريد الإلكتروني</th>"
-    . "<th>رقم الهوية</th>"
-    . "<th>العنوان</th>"
-    . "<th>نوع السكن</th>"
-    . "<th>الحالة الاجتماعية</th>"
-    . "<th>عقد الزواج</th>"
-    . "<th>سعر اليوم</th>"
-    . "<th>إجمالي الإيجار</th>"
-    . "<th>تاريخ البداية</th>"
-    . "<th>تاريخ النهاية</th>"
+    . "<th>" . __('export_tenants.name') . "</th>"
+    . "<th>" . __('export_tenants.phone') . "</th>"
+    . "<th>" . __('export_tenants.email') . "</th>"
+    . "<th>" . __('export_tenants.cin') . "</th>"
+    . "<th>" . __('export_tenants.address') . "</th>"
+    . "<th>" . __('export_tenants.house_type') . "</th>"
+    . "<th>" . __('export_tenants.marital_status') . "</th>"
+    . "<th>" . __('export_tenants.marriage_contract') . "</th>"
+    . "<th>" . __('export_tenants.start_date') . "</th>"
+    . "<th>" . __('export_tenants.end_date') . "</th>"
     . "</tr>";
 foreach ($full_tenants as $tenant) {
     $isActive = strtotime($tenant['end_date']) >= time();
@@ -70,21 +69,20 @@ foreach ($full_tenants as $tenant) {
     $contractCell = '-';
     if ($tenant['marital_status'] === 'Married' && !empty($tenant['marriage_contract'])) {
         $contractUrl = $baseUrl . ltrim($tenant['marriage_contract'], '/');
-        $contractCell = "<a href=\"" . htmlspecialchars($contractUrl) . "\" target=\"_blank\">عرض العقد</a>";
+        $contractCell = "<a href=\"" . htmlspecialchars($contractUrl) . "\" target=\"_blank\">" . __('export_tenants.view_contract') . "</a>";
     } else if ($tenant['marital_status'] === 'Married') {
-        $contractCell = 'غير متوفر';
+        $contractCell = __('export_tenants.not_available');
     }
     
     echo "<tr>"
         . "<td>" . htmlspecialchars($tenant['full_name']) . "</td>"
         . "<td>" . htmlspecialchars($tenant['phone']) . "</td>"
-        . "<td>" . htmlspecialchars($tenant['email'] ?: 'غير محدد') . "</td>"
+        . "<td>" . htmlspecialchars($tenant['email'] ?: __('full_tenants_list.not_specified')) . "</td>"
         . "<td>" . htmlspecialchars($tenant['cin']) . "</td>"
-        . "<td>" . htmlspecialchars($tenant['address'] ?: 'غير محدد') . "</td>"
+        . "<td>" . htmlspecialchars($tenant['address'] ?: __('full_tenants_list.not_specified')) . "</td>"
         . "<td>" . htmlspecialchars(isset($housing_type_map[$tenant['house_type']]) ? $housing_type_map[$tenant['house_type']] : $tenant['house_type']) . "</td>"
         . "<td>" . htmlspecialchars($tenant['marital_status']) . "</td>"
         . "<td>" . $contractCell . "</td>"
-        . "<td>" . formatCurrency($price_per_day) . "</td>"
         . "<td>" . date('Y/m/d', strtotime($tenant['start_date'])) . "</td>"
         . "<td>" . date('Y/m/d', strtotime($tenant['end_date'])) . "</td>"
         . "</tr>";

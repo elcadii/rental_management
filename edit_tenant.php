@@ -1,6 +1,7 @@
 <?php
 require_once 'config/db.php';
 require_once 'includes/currency_manager.php';
+require_once 'includes/i18n.php';
 requireLogin();
 
 $tenant_id = (int)($_GET['id'] ?? 0);
@@ -13,8 +14,7 @@ $stmt->execute([$tenant_id, $_SESSION['admin_id']]);
 $tenant = $stmt->fetch();
 
 if (!$tenant) {
-    header('Location: dashboard.php');
-    exit();
+    die(__('errors.tenant_not_found'));
 }
 
 // Fetch housing types for this admin
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (in_array($file_extension, $allowed_extensions)) {
             // تحقق من حجم الملف (5MB)
             if ($_FILES['marriage_contract']['size'] > 5 * 1024 * 1024) {
-                $errors['marriage_contract'] = 'حجم الملف يجب أن يكون أقل من 5 ميجابايت';
+                $errors['marriage_contract'] = __('errors.file_size_limit');
             } else {
                 $new_filename = uniqid() . '_' . time() . '.' . $file_extension;
                 $upload_path = $upload_dir . $new_filename;
@@ -62,62 +62,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                     $marriage_contract_path = $upload_path;
                 } else {
-                    $errors['marriage_contract'] = 'فشل في رفع الملف';
+                    $errors['marriage_contract'] = __('errors.upload_failed');
                 }
             }
         } else {
-            $errors['marriage_contract'] = 'نوع الملف غير مسموح به';
+            $errors['marriage_contract'] = __('errors.invalid_file_type');
         }
     } elseif ($marital_status === 'Married' && empty($marriage_contract_path)) {
         // If married but no file uploaded and no existing file, show error
-        $errors['marriage_contract'] = 'عقد الزواج مطلوب للمتزوجين';
+        $errors['marriage_contract'] = __('errors.marriage_contract_required');
     }
     
     // Data validation
     if (empty($full_name)) {
-        $errors['full_name'] = 'الاسم الكامل مطلوب';
+        $errors['full_name'] = __('errors.tenant_name_required');
     }
     
     if (empty($phone)) {
-        $errors['phone'] = 'رقم الهاتف مطلوب';
+        $errors['phone'] = __('errors.tenant_phone_required');
     }
     
     if (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors['email'] = 'البريد الإلكتروني غير صحيح';
+        $errors['email'] = __('errors.invalid_email');
     }
     
     if (empty($cin)) {
-        $errors['cin'] = 'رقم الهوية مطلوب';
+        $errors['cin'] = __('errors.tenant_cin_required');
     }
     
     if (empty($address)) {
-        $errors['address'] = 'العنوان مطلوب';
+        $errors['address'] = __('errors.tenant_address_required');
     }
     
     if (empty($house_type)) {
-        $errors['house_type'] = 'نوع السكن مطلوب';
+        $errors['house_type'] = __('errors.tenant_house_type_required');
     }
     
     if (empty($marital_status)) {
-        $errors['marital_status'] = 'الحالة الاجتماعية مطلوبة';
+        $errors['marital_status'] = __('errors.tenant_marital_status_required');
     }
     
     if (empty($start_date)) {
-        $errors['start_date'] = 'تاريخ بداية الإيجار مطلوب';
+        $errors['start_date'] = __('errors.tenant_start_date_required');
     }
     
     if (empty($end_date)) {
-        $errors['end_date'] = 'تاريخ نهاية الإيجار مطلوب';
+        $errors['end_date'] = __('errors.tenant_end_date_required');
     }
     
     if ($price_per_day === '' || $price_per_day <= 0) {
-        $errors['pricePerDay'] = 'سعر الإيجار اليومي مطلوب ويجب أن يكون رقمًا موجبًا';
+        $errors['pricePerDay'] = __('errors.tenant_price_per_day_required');
     }
     
     // Check that end date is after start date
     if (!empty($start_date) && !empty($end_date)) {
         if (strtotime($end_date) <= strtotime($start_date)) {
-            $errors['end_date'] = 'تاريخ النهاية يجب أن يكون بعد تاريخ البداية';
+            $errors['end_date'] = __('errors.tenant_end_date_after_start');
         }
     }
     
@@ -141,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ");
         
         if ($stmt->execute([$full_name, $phone, $email ?: null, $cin, $address, $house_type, $marital_status, $start_date, $end_date, $price_per_day, $total_rent, $marriage_contract_path, $tenant_id, $_SESSION['admin_id']])) {
-            $success = 'تم تحديث بيانات المستأجر بنجاح!';
+            $success = __('success.tenant_updated');
             // Update displayed data
             $tenant['full_name'] = $full_name;
             $tenant['phone'] = $phone;
@@ -156,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $tenant['total_rent'] = $total_rent;
             $tenant['marriage_contract'] = $marriage_contract_path;
         } else {
-            $errors['general'] = 'حدث خطأ أثناء تحديث بيانات المستأجر';
+            $errors['general'] = __('errors.tenant_update_failed');
         }
     }
 }
@@ -166,11 +166,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php include 'sidebar.php'; ?>
 
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="<?php echo htmlspecialchars(currentLang()); ?>" dir="<?php echo htmlspecialchars(currentDir()); ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تعديل بيانات المستأجر - نظام إدارة الإيجارات</title>
+    <title><?php echo __('edit_tenant.title'); ?> - <?php echo __('app.title'); ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -179,13 +179,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50" dir="<?php echo htmlspecialchars(currentDir()); ?>">
 
     <!-- القسم الرئيسي -->
     <div class="gradient-bg py-12">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 class="text-3xl font-bold text-white mb-2">تعديل بيانات المستأجر</h1>
-            <p class="text-blue-100">تعديل بيانات: <?php echo htmlspecialchars($tenant['full_name']); ?></p>
+            <h1 class="text-3xl font-bold text-white mb-2"><?php echo __('edit_tenant.hero_title'); ?></h1>
+            <p class="text-blue-100"><?php echo __('edit_tenant.hero_sub'); ?>: <?php echo htmlspecialchars($tenant['full_name']); ?></p>
         </div>
     </div>
 
@@ -194,7 +194,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="px-6 py-4 bg-gray-50 border-b">
                 <div class="flex flex-col sm:flex-row items-center gap-2">
                     <i class="fas fa-user-edit text-blue-600 text-xl ml-3"></i>
-                    <h3 class="text-lg font-bold text-gray-900">نموذج تعديل المستأجر</h3>
+                    <h3 class="text-lg font-bold text-gray-900"><?php echo __('edit_tenant.form_title'); ?></h3>
                 </div>
             </div>
             
@@ -231,7 +231,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="sm:col-span-2">
                         <label for="full_name" class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-user ml-1"></i>
-                            الاسم الكامل للمستأجر
+                            <?php echo __('edit_tenant.full_name'); ?>
                         </label>
                         <input type="text" name="full_name" id="full_name" required
                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
@@ -245,7 +245,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div>
                         <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-phone ml-1"></i>
-                            رقم الهاتف
+                            <?php echo __('edit_tenant.phone'); ?>
                         </label>
                         <input type="tel" name="phone" id="phone" required
                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
@@ -259,7 +259,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div>
                         <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-envelope ml-1"></i>
-                            البريد الإلكتروني <span class="text-gray-500">(اختياري)</span>
+                            <?php echo __('edit_tenant.email'); ?> <span class="text-gray-500">(<?php echo __('edit_tenant.optional'); ?>)</span>
                         </label>
                         <input type="email" name="email" id="email"
                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
@@ -273,7 +273,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div>
                         <label for="cin" class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-id-card ml-1"></i>
-                            رقم الهوية الوطنية (CIN)
+                            <?php echo __('edit_tenant.cin'); ?>
                         </label>
                         <input type="text" name="cin" id="cin" required
                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
@@ -287,11 +287,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="sm:col-span-2">
                         <label for="address" class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-map-marker-alt ml-1"></i>
-                            العنوان
+                            <?php echo __('edit_tenant.address'); ?>
                         </label>
                         <textarea name="address" id="address" required rows="3"
                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                                  placeholder="أدخل العنوان الكامل للمستأجر"
+                                  placeholder="<?php echo __('edit_tenant.placeholder_address'); ?>"
                                   ><?php echo htmlspecialchars($tenant['address'] ?? ''); ?></textarea>
                         <div id="address-error" class="text-red-500 text-sm mt-1">
                             <?php echo $errors['address'] ?? ''; ?>
@@ -302,11 +302,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div>
                         <label for="house_type" class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-building ml-1"></i>
-                            نوع السكن أو الغرفة
+                            <?php echo __('edit_tenant.house_type'); ?>
                         </label>
                         <select name="house_type" id="house_type" required
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
-                            <option value="">اختر نوع السكن</option>
+                            <option value=""><?php echo __('edit_tenant.select_house_type'); ?></option>
                             <?php foreach ($admin_housing_types as $type): ?>
                                 <option value="<?php echo htmlspecialchars($type['name']); ?>" <?php echo ($tenant['house_type'] ?? '') === $type['name'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($type['name']); ?></option>
                             <?php endforeach; ?>
@@ -320,14 +320,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div>
                         <label for="marital_status" class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-ring ml-1"></i>
-                            الحالة الاجتماعية
+                            <?php echo __('edit_tenant.marital_status'); ?>
                         </label>
                         <select name="marital_status" id="marital_status" required
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
-                            <option value="">اختر الحالة الاجتماعية</option>
-                            <option value="Single" <?php echo ($marital_status ?? '') === 'Single' ? 'selected' : ''; ?>>أعزب</option>
-                            <option value="Married" <?php echo ($marital_status ?? '') === 'Married' ? 'selected' : ''; ?>>متزوج</option>
-                            <option value="Family" <?php echo ($marital_status ?? '') === 'Family' ? 'selected' : ''; ?>>عائلة</option>
+                            <option value=""><?php echo __('edit_tenant.select_marital_status'); ?></option>
+                            <option value="Single" <?php echo ($marital_status ?? '') === 'Single' ? 'selected' : ''; ?>><?php echo __('edit_tenant.single'); ?></option>
+                            <option value="Married" <?php echo ($marital_status ?? '') === 'Married' ? 'selected' : ''; ?>><?php echo __('edit_tenant.married'); ?></option>
+                            <option value="Family" <?php echo ($marital_status ?? '') === 'Family' ? 'selected' : ''; ?>><?php echo __('edit_tenant.family'); ?></option>
                         </select>
                         <div id="marital_status-error" class="text-red-500 text-sm mt-1">
                             <?php echo $errors['marital_status'] ?? ''; ?>
@@ -338,7 +338,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div id="marriage-upload-wrapper" class="sm:col-span-2 hidden" aria-hidden="true">
                         <label for="marriage_contract" class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-file-upload ml-1"></i>
-                            نسخة من عقد الزواج (صورة أو PDF)
+                            <?php echo __('edit_tenant.marriage_contract'); ?>
                         </label>
                         <input
                             type="file"
@@ -347,7 +347,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             accept=".jpg,.jpeg,.png,.pdf,application/pdf"
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
                         />
-                        <p class="text-xs text-gray-500 mt-1">الملفات المسموحة: JPG, PNG, PDF</p>
+                        <p class="text-xs text-gray-500 mt-1"><?php echo __('edit_tenant.allowed_files'); ?></p>
                         <div id="marriage_contract-error" class="text-red-500 text-sm mt-1">
                             <?php echo $errors['marriage_contract'] ?? ''; ?>
                         </div>
@@ -357,11 +357,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <div class="mt-2 p-3 bg-green-50 border border-green-200 rounded-lg">
                                 <div class="flex items-center gap-2 text-green-700">
                                     <i class="fas fa-file-check"></i>
-                                    <span class="text-sm font-medium">العقد الحالي:</span>
+                                    <span class="text-sm font-medium"><?php echo __('edit_tenant.current_contract'); ?>:</span>
                                     <a href="<?php echo htmlspecialchars($tenant['marriage_contract']); ?>" 
                                        target="_blank" 
                                        class="text-blue-600 hover:text-blue-800 underline">
-                                        عرض العقد
+                                        <?php echo __('edit_tenant.view_contract'); ?>
                                     </a>
                                 </div>
                             </div>
@@ -372,7 +372,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div>
                         <label for="start_date" class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-calendar-alt ml-1"></i>
-                            تاريخ بداية الإيجار
+                            <?php echo __('edit_tenant.start_date'); ?>
                         </label>
                         <input type="date" name="start_date" id="start_date" required
                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
@@ -386,7 +386,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div>
                         <label for="end_date" class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-calendar-check ml-1"></i>
-                            تاريخ نهاية الإيجار
+                            <?php echo __('edit_tenant.end_date'); ?>
                         </label>
                         <input type="date" name="end_date" id="end_date" required
                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
@@ -400,11 +400,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div>
                         <label for="pricePerDay" class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-money-bill-wave ml-1"></i>
-                            سعر الإيجار اليومي (<?php echo getCurrentCurrency()['symbol']; ?> <?php echo getCurrentCurrency()['code']; ?>)
+                            <?php echo __('edit_tenant.price_per_day'); ?> (<?php echo getCurrentCurrency()['symbol']; ?> <?php echo getCurrentCurrency()['code']; ?>)
                         </label>
                         <input type="number" name="pricePerDay" id="pricePerDay" min="1" step="0.01" required
                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                               placeholder="مثال: 100"
+                               placeholder="<?php echo __('edit_tenant.placeholder_price_per_day'); ?>"
                                value="<?php echo htmlspecialchars($tenant['price_per_day'] ?? ''); ?>">
                         <div id="pricePerDay-error" class="text-red-500 text-sm mt-1">
                             <?php echo $errors['pricePerDay'] ?? ''; ?>
@@ -416,12 +416,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="mt-6 p-4 bg-yellow-50 rounded-lg">
                     <div class="flex items-center mb-2">
                         <i class="fas fa-info-circle text-yellow-600 ml-2"></i>
-                        <h4 class="font-medium text-yellow-900">معلومات التعديل</h4>
+                        <h4 class="font-medium text-yellow-900"><?php echo __('edit_tenant.important_info'); ?></h4>
                     </div>
                     <ul class="text-sm text-yellow-800 space-y-1">
-                        <li>• تأكد من صحة جميع البيانات قبل الحفظ</li>
-                        <li>• سيتم تحديث البيانات فوراً بعد الحفظ</li>
-                        <li>• يمكنك إلغاء التعديل والعودة للقائمة الرئيسية</li>
+                        <li>• <?php echo __('edit_tenant.info_verify_data'); ?></li>
+                        <li>• <?php echo __('edit_tenant.info_update_immediately'); ?></li>
+                        <li>• <?php echo __('edit_tenant.info_cancel_edit'); ?></li>
                     </ul>
                 </div>
                 
@@ -433,16 +433,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 
                 <!-- أزرار الإجراءات -->
-                <div class="mt-8 flex justify-end space-x-4 space-x-reverse">
+                <div class="mt-8 flex gap-2 justify-end space-x-4 space-x-reverse">
                     <a href="dashboard.php" 
                        class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition duration-200">
                         <i class="fas fa-times ml-1"></i>
-                        إلغاء
+                        <?php echo __('edit_tenant.cancel'); ?>
                     </a>
                     <button type="submit" 
                             class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition duration-200">
                         <i class="fas fa-save ml-1"></i>
-                        حفظ التعديلات
+                        <?php echo __('edit_tenant.save_changes'); ?>
                     </button>
                 </div>
             </form>
@@ -485,14 +485,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // التحقق من الاسم الكامل
             const fullName = document.getElementById('full_name').value.trim();
             if (!fullName) {
-                document.getElementById('full_name-error').textContent = 'الاسم الكامل مطلوب';
+                document.getElementById('full_name-error').textContent = '<?php echo __('errors.tenant_name_required'); ?>';
                 isValid = false;
             }
             
             // التحقق من رقم الهاتف
             const phone = document.getElementById('phone').value.trim();
             if (!phone) {
-                document.getElementById('phone-error').textContent = 'رقم الهاتف مطلوب';
+                document.getElementById('phone-error').textContent = '<?php echo __('errors.tenant_phone_required'); ?>';
                 isValid = false;
             }
             
@@ -501,7 +501,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (email) {
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!emailRegex.test(email)) {
-                    document.getElementById('email-error').textContent = 'البريد الإلكتروني غير صحيح';
+                    document.getElementById('email-error').textContent = '<?php echo __('errors.invalid_email'); ?>';
                     isValid = false;
                 }
             }
@@ -509,49 +509,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // التحقق من رقم الهوية
             const cin = document.getElementById('cin').value.trim();
             if (!cin) {
-                document.getElementById('cin-error').textContent = 'رقم الهوية مطلوب';
+                document.getElementById('cin-error').textContent = '<?php echo __('errors.tenant_cin_required'); ?>';
                 isValid = false;
             }
             
             // التحقق من العنوان
             const address = document.getElementById('address').value.trim();
             if (!address) {
-                document.getElementById('address-error').textContent = 'العنوان مطلوب';
+                document.getElementById('address-error').textContent = '<?php echo __('errors.tenant_address_required'); ?>';
                 isValid = false;
             }
             
             // التحقق من نوع السكن
             const houseType = document.getElementById('house_type').value;
             if (!houseType) {
-                document.getElementById('house_type-error').textContent = 'نوع السكن مطلوب';
+                document.getElementById('house_type-error').textContent = '<?php echo __('errors.tenant_house_type_required'); ?>';
                 isValid = false;
             }
             
             // Validate marital status
             const maritalStatus = document.getElementById('marital_status').value;
             if (!maritalStatus) {
-                document.getElementById('marital_status-error').textContent = 'الحالة الاجتماعية مطلوبة';
+                document.getElementById('marital_status-error').textContent = '<?php echo __('errors.tenant_marital_status_required'); ?>';
                 isValid = false;
             }
             
             // التحقق من تاريخ البداية
             const startDate = document.getElementById('start_date').value;
             if (!startDate) {
-                document.getElementById('start_date-error').textContent = 'تاريخ بداية الإيجار مطلوب';
+                document.getElementById('start_date-error').textContent = '<?php echo __('errors.tenant_start_date_required'); ?>';
                 isValid = false;
             }
             
             // التحقق من تاريخ النهاية
             const endDate = document.getElementById('end_date').value;
             if (!endDate) {
-                document.getElementById('end_date-error').textContent = 'تاريخ نهاية الإيجار مطلوب';
+                document.getElementById('end_date-error').textContent = '<?php echo __('errors.tenant_end_date_required'); ?>';
                 isValid = false;
             }
             
             // التحقق من أن تاريخ النهاية بعد تاريخ البداية
             if (startDate && endDate) {
                 if (new Date(endDate) <= new Date(startDate)) {
-                    document.getElementById('end_date-error').textContent = 'تاريخ النهاية يجب أن يكون بعد تاريخ البداية';
+                    document.getElementById('end_date-error').textContent = '<?php echo __('errors.tenant_end_date_after_start'); ?>';
                     isValid = false;
                 }
             }
@@ -559,7 +559,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // التحقق من سعر الإيجار اليومي
             const pricePerDay = parseFloat(document.getElementById('pricePerDay').value);
             if (pricePerDay === 0 || isNaN(pricePerDay)) {
-                document.getElementById('pricePerDay-error').textContent = 'سعر الإيجار اليومي مطلوب ويجب أن يكون رقمًا موجبًا';
+                document.getElementById('pricePerDay-error').textContent = '<?php echo __('errors.tenant_price_per_day_required'); ?>';
                 isValid = false;
             }
             
@@ -572,21 +572,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     // تحقق من وجود عقد قديم
                     const currentContract = '<?php echo !empty($tenant['marriage_contract']) ? "exists" : ""; ?>';
                     if (!currentContract) {
-                        marriageContractError.textContent = 'عقد الزواج مطلوب للمتزوجين';
+                        marriageContractError.textContent = '<?php echo __('errors.marriage_contract_required'); ?>';
                         isValid = false;
                     }
                 } else {
                     const file = marriageContract.files[0];
                     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
                     if (!allowedTypes.includes(file.type)) {
-                        marriageContractError.textContent = 'نوع الملف غير مسموح به. الملفات المسموحة: JPG, PNG, PDF';
+                        marriageContractError.textContent = '<?php echo __('errors.invalid_file_type'); ?>. <?php echo __('edit_tenant.allowed_files'); ?>';
                         isValid = false;
                     }
                     
                     // تحقق من حجم الملف (5MB كحد أقصى)
                     const maxSize = 5 * 1024 * 1024; // 5MB
                     if (file.size > maxSize) {
-                        marriageContractError.textContent = 'حجم الملف يجب أن يكون أقل من 5 ميجابايت';
+                        marriageContractError.textContent = '<?php echo __('errors.file_size_limit'); ?>';
                         isValid = false;
                     }
                 }
@@ -611,8 +611,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     total = days * pricePerDay;
                 }
             }
-            document.getElementById('days-count').textContent = days > 0 ? `عدد الأيام: ${days}` : '';
-            document.getElementById('total-rent').textContent = (days > 0 && total > 0) ? `| إجمالي الإيجار: <?php echo getCurrentCurrency()['symbol']; ?> ${total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : '';
+            document.getElementById('days-count').textContent = days > 0 ? `<?php echo __('edit_tenant.days_count'); ?>: ${days}` : '';
+            document.getElementById('total-rent').textContent = (days > 0 && total > 0) ? `| <?php echo __('edit_tenant.total_rent'); ?>: <?php echo getCurrentCurrency()['symbol']; ?> ${total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : '';
         }
         document.getElementById('start_date').addEventListener('input', calculateTotalRent);
         document.getElementById('end_date').addEventListener('input', calculateTotalRent);

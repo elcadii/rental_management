@@ -25,6 +25,9 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Initialize i18n (safe to include multiple times)
+require_once __DIR__ . '/../includes/i18n.php';
+
 // Function to check if user is logged in
 function isLoggedIn() {
     return isset($_SESSION['admin_id']) && !empty($_SESSION['admin_id']);

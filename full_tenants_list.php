@@ -1,6 +1,7 @@
 <?php
 require_once 'config/db.php';
 require_once 'includes/currency_manager.php';
+require_once 'includes/i18n.php';
 requireLogin();
 
 // Fetch all housing types for this admin
@@ -44,11 +45,11 @@ $current_currency = getCurrentCurrency();
 <?php include 'sidebar.php'; ?>
 
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="<?php echo htmlspecialchars(currentLang()); ?>" dir="<?php echo htmlspecialchars(currentDir()); ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>القائمة الكاملة للمستأجرين</title>
+    <title><?php echo __('full_tenants_list.title'); ?> - <?php echo __('app.title'); ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -56,30 +57,30 @@ $current_currency = getCurrentCurrency();
         body { font-family: 'Tajawal', Arial, sans-serif; }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-gray-50 min-h-screen" dir="<?php echo htmlspecialchars(currentDir()); ?>">
     <div class="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 py-8">
         <div class="bg-white rounded-xl shadow-lg overflow-hidden">
             <div class="px-2 sm:px-6 py-4 bg-gray-50 border-b flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <h3 class="text-lg font-bold text-gray-900">القائمة الكاملة للمستأجرين</h3>
+                <h3 class="text-lg font-bold text-gray-900"><?php echo __('full_tenants_list.heading'); ?></h3>
             </div>
             <!-- Stylish filter/search bar -->
             <div class="px-2 sm:px-6 py-4 bg-blue-50 border-b flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <form method="get" class="flex flex-col md:flex-row gap-2 md:gap-4 items-center w-full">
                     <div class="flex flex-col md:flex-row gap-2 md:gap-4 w-full md:w-auto">
                         <select name="full_filter_housing_type" class="px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-500 bg-white text-gray-700 w-full md:w-auto">
-                            <option value="">كل أنواع السكن</option>
+                            <option value=""><?php echo __('full_tenants_list.all_housing_types'); ?></option>
                             <?php foreach ($admin_housing_types as $type): ?>
                                 <option value="<?php echo htmlspecialchars($type['name']); ?>" <?php echo $filter_housing_type === $type['name'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($type['name']); ?></option>
                             <?php endforeach; ?>
                         </select>
-                        <input type="text" name="full_search" placeholder="بحث بالاسم أو الهاتف أو البريد أو الهوية أو العنوان" value="<?php echo htmlspecialchars($search_query); ?>" class="px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-500 bg-white text-gray-700 w-full md:w-64" />
+                        <input type="text" name="full_search" placeholder="<?php echo __('full_tenants_list.search_placeholder'); ?>" value="<?php echo htmlspecialchars($search_query); ?>" class="px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-500 bg-white text-gray-700 w-full md:w-64" />
                     </div>
                     <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold transition flex items-center gap-2">
-                        <i class="fas fa-search"></i> بحث
+                        <i class="fas fa-search"></i> <?php echo __('full_tenants_list.search'); ?>
                     </button>
                     <a href="export_tenants_excel.php?full_filter_housing_type=<?php echo urlencode($filter_housing_type); ?>&full_search=<?php echo urlencode($search_query); ?>" 
                        class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold transition flex items-center gap-2">
-                        <i class="fas fa-file-excel"></i> تصدير Excel
+                        <i class="fas fa-file-excel"></i> <?php echo __('full_tenants_list.export_excel'); ?>
                     </a>
                     <!-- <a href="export_tenants_pdf.php?full_filter_housing_type=<?php echo urlencode($filter_housing_type); ?>&full_search=<?php echo urlencode($search_query); ?>" 
                        class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-semibold transition flex items-center gap-2">
@@ -97,20 +98,20 @@ $current_currency = getCurrentCurrency();
                 <table class="min-w-full divide-y divide-gray-200 text-xs sm:text-sm">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الاسم</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الهاتف</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">البريد الإلكتروني</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">رقم الهوية</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">العنوان</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">نوع السكن</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الحالة الاجتماعية</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">عقد الزواج</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">سعر اليوم</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">إجمالي الإيجار</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">تاريخ البداية</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">تاريخ النهاية</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الحالة</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الإجراءات</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase"><?php echo __('full_tenants_list.table.name'); ?></th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase"><?php echo __('full_tenants_list.table.phone'); ?></th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase"><?php echo __('full_tenants_list.table.email'); ?></th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase"><?php echo __('full_tenants_list.table.cin'); ?></th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase"><?php echo __('full_tenants_list.table.address'); ?></th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase"><?php echo __('full_tenants_list.table.house_type'); ?></th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase"><?php echo __('full_tenants_list.table.marital_status'); ?></th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase"><?php echo __('full_tenants_list.table.marriage_contract'); ?></th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase"><?php echo __('full_tenants_list.table.price_per_day'); ?></th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase"><?php echo __('full_tenants_list.table.total_rent'); ?></th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase"><?php echo __('full_tenants_list.table.start_date'); ?></th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase"><?php echo __('full_tenants_list.table.end_date'); ?></th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase"><?php echo __('full_tenants_list.table.status'); ?></th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase"><?php echo __('full_tenants_list.table.actions'); ?></th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -126,13 +127,13 @@ $current_currency = getCurrentCurrency();
                                     <?php echo htmlspecialchars($tenant['phone']); ?>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    <?php echo htmlspecialchars($tenant['email'] ?? 'غير محدد'); ?>
+                                    <?php echo htmlspecialchars($tenant['email'] ?? __('full_tenants_list.not_specified')); ?>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     <?php echo htmlspecialchars($tenant['cin']); ?>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    <?php echo htmlspecialchars($tenant['address'] ?? 'غير محدد'); ?>
+                                    <?php echo htmlspecialchars($tenant['address'] ?? __('full_tenants_list.not_specified')); ?>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
@@ -151,19 +152,19 @@ $current_currency = getCurrentCurrency();
                                             <div class="flex items-center gap-2">
                                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                                     <i class="fas fa-file-check ml-1"></i>
-                                                    متوفر
+                                                    <?php echo __('full_tenants_list.available'); ?>
                                                 </span>
                                                 <a href="<?php echo htmlspecialchars($tenant['marriage_contract']); ?>" 
                                                    target="_blank" 
                                                    class="text-blue-600 hover:text-blue-800 text-xs underline"
-                                                   title="عرض عقد الزواج">
+                                                   title="<?php echo __('full_tenants_list.view_marriage_contract'); ?>">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                             </div>
                                         <?php else: ?>
                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                                                 <i class="fas fa-file-times ml-1"></i>
-                                                غير متوفر
+                                                <?php echo __('full_tenants_list.not_available'); ?>
                                             </span>
                                         <?php endif; ?>
                                     <?php else: ?>
@@ -189,23 +190,23 @@ $current_currency = getCurrentCurrency();
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <?php if ($isActive): ?>
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                            نشط
+                                            <?php echo __('full_tenants_list.active'); ?>
                                         </span>
                                     <?php else: ?>
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                            منتهي
+                                            <?php echo __('full_tenants_list.expired'); ?>
                                         </span>
                                     <?php endif; ?>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <div class="flex space-x-2 space-x-reverse">
+                                    <div class="flex gap-2 space-x-2 space-x-reverse">
                                         <a href="edit_tenant.php?id=<?php echo $tenant['id']; ?>" 
                                            class="text-blue-600 hover:text-blue-900">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <a href="delete_tenant.php?id=<?php echo $tenant['id']; ?>" 
                                            class="text-red-600 hover:text-red-900"
-                                           onclick="return confirm('هل أنت متأكد من حذف هذا المستأجر؟')">
+                                           onclick="return confirm('<?php echo __('confirm.delete_tenant'); ?>')">
                                             <i class="fas fa-trash"></i>
                                         </a>
                                     </div>

@@ -1,37 +1,38 @@
 <?php
+require_once __DIR__ . '/includes/i18n.php';
 $current = basename($_SERVER['PHP_SELF']);
 $nav = [
     [
         'file' => 'dashboard.php',
-        'label' => 'الرئيسية',
+        'label' => __('sidebar.home'),
         'icon' => 'fa-home',
     ],
     [
         'file' => 'add_tenant.php',
-        'label' => 'إضافة مستأجر',
+        'label' => __('sidebar.add_tenant'),
         'icon' => 'fa-user-plus',
     ],
     [
         'file' => 'full_tenants_list.php',
-        'label' => 'قائمة المستأجرين',
+        'label' => __('sidebar.tenants_list'),
         'icon' => 'fa-users',
     ],
     [
         'file' => 'housing_types.php',
-        'label' => 'أنواع السكن',
+        'label' => __('sidebar.housing_types'),
         'icon' => 'fa-building',
     ],
      [
         'file' => 'profile.php' ,
-        'label' => 'حسابي',
+        'label' => __('sidebar.profile'),
         'icon' => 'fa-user',
     ],
 ];
 ?>
-<aside class="fixed top-0 right-0 h-full w-64 bg-white border-l border-blue-100 shadow-lg flex flex-col z-40">
+<aside class="fixed top-0 <?php echo currentDir()==='rtl' ? 'right-0' : 'left-0'; ?> h-full w-64 bg-white border-l border-blue-100 shadow-lg flex flex-col z-40">
     <div class="flex items-center justify-center h-16 border-b border-blue-100">
         <a href="index.php" class="text-2xl font-extrabold text-blue-700 flex items-center gap-2">
-            <i class="fas fa-home"></i> نظام الإيجارات
+            <i class="fas fa-home"></i> <?php echo __('app.title'); ?>
         </a>
     </div>
     <nav class="flex-1 overflow-y-auto py-4">
@@ -51,12 +52,12 @@ $nav = [
         <a href="logout.php"
            class="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-red-500 text-white font-medium text-base hover:bg-red-600 transition justify-center">
             <i class="fas fa-sign-out-alt"></i>
-            <span>تسجيل الخروج</span>
+            <span><?php echo __('header.logout'); ?></span>
         </a>
     </div>
 </aside>
 <!-- Responsive toggle button for mobile -->
-<div class="md:hidden fixed top-4 right-4 z-50">
+<div class="md:hidden fixed top-4 <?php echo currentDir()==='rtl' ? 'right-4' : 'left-4'; ?> z-50">
     <button id="sidebar-toggle" class="bg-blue-600 text-white p-2 rounded-lg shadow-lg focus:outline-none">
         <i class="fas fa-bars"></i>
     </button>
@@ -82,8 +83,8 @@ $nav = [
     window.addEventListener('DOMContentLoaded', handleResize);
 </script>
 <style>
-    body { padding-right: 16rem; padding-left: 0; }
+    body { <?php echo currentDir()==='rtl' ? 'padding-right: 16rem; padding-left: 0;' : 'padding-left: 16rem; padding-right: 0;'; ?> }
     @media (max-width: 767px) {
-        body { padding-right: 0; }
+        body { padding-left: 0; padding-right: 0; }
     }
 </style> 

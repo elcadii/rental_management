@@ -1,0 +1,493 @@
+{
+	"app": {"title": "Rentals System"},
+	"header": {"logout": "Logout"},
+	"sidebar": {
+		"home": "Dashboard",
+		"add_tenant": "Add Tenant",
+		"tenants_list": "Tenants List",
+		"housing_types": "Housing Types",
+		"profile": "My Account"
+	},
+	"profile": {
+		"page_title": "Profile",
+		"greeting": "Hello, {name}",
+		"welcome_subtitle": "Welcome to the Rentals Management Dashboard",
+		"personal_info": "Personal Information",
+		"email": "Email",
+		"phone": "Phone",
+		"join_date": "Join Date",
+		"not_set": "Not set",
+		"edit_profile": "Edit Profile",
+		"change_password": "Change Password",
+		"stats_total_tenants": "Total Tenants",
+		"stats_housing_types": "Housing Types",
+		"stats_active_contracts": "Active Contracts",
+		"stats_expired_contracts": "Expired Contracts",
+		"avg_daily_rent": "Average Daily Rent",
+		"occupancy_rate": "Occupancy Rate",
+		"units_occupied": "units occupied",
+		"tenants_label": "tenant(s)",
+		"monthly_revenue_title": "Monthly Revenue (Last 6 months) - {symbol} {code}",
+		"revenue_by_type_title": "Revenue by Housing Type - {symbol} {code}",
+		"contracts_status": "Contracts Status",
+		"active_contracts": "Active Contracts",
+		"expired_contracts": "Expired Contracts",
+		"quick_actions": "Quick Actions",
+		"view_all_tenants": "View All Tenants",
+		"export_excel": "Export Excel Report",
+		"revenue_summary": "Revenue Summary"
+	},
+	"dashboard": {
+		"page_title": "Dashboard",
+		"trial_banner": {
+			"title": "14-day free trial",
+			"days_left": "{days} days remaining in free trial",
+			"upgrade": "Upgrade Account"
+		},
+		"hero": {
+			"title": "Rentals Management System",
+			"subtitle": "A comprehensive system for managing multi-property rental bookings with tenant tracking and contract management"
+		},
+		"stats": {
+			"title": "Statistics",
+			"description": "Reports and statistics about rentals and tenants",
+			"total_tenants": "Total Tenants",
+			"active_contracts": "Active Contracts",
+			"expired_contracts": "Expired Contracts",
+			"view_details": "View Details"
+		},
+		"tenants": {
+			"title": "Tenants List",
+			"description": "View and manage all current and previous tenants",
+			"no_tenants": "No tenants registered yet",
+			"view_full_list": "View Full List"
+		},
+		"add_tenant": {
+			"title": "Add New Tenant",
+			"description": "Register a new tenant with all required data",
+			"start_message": "Start by adding a new tenant to the system",
+			"button": "Add Tenant"
+		},
+		"features": {
+			"title": "Main Features",
+			"tenant_tracking": {
+				"title": "Tenant Tracking",
+				"description": "Save and track all tenant data easily"
+			},
+			"multi_property": {
+				"title": "Multi-Property Management",
+				"description": "Manage multiple types of houses and apartments in one place"
+			}
+		}
+	}
+	,
+	"index": {
+		"home": "Home",
+		"trial_banner": {"message": "Try the rentals management system free for 14 days – no credit card ✨"},
+		"nav": {
+			"features": "Features",
+			"pricing": "Pricing",
+			"testimonials": "Testimonials",
+			"contact": "Contact",
+			"dashboard": "Dashboard",
+			"login": "Login"
+		},
+		"hero": {
+			"badge": "Integrated management system",
+			"title_line1": "Manage tenants and properties",
+			"title_line2": "with ease",
+			"subtitle": "A complete system to manage properties and tenants with payments, maintenance and financial reports in a professional and simple way",
+			"watch_demo": "Watch demo"
+		},
+		"cta": {
+			"trial": "Start free trial",
+			"title": "Start managing your properties professionally today",
+			"subtitle": "Join hundreds of landlords who trust our system",
+			"trial_14": "Start 14-day free trial",
+			"talk_to_expert": "Talk to an expert",
+			"no_cc": "No credit card required • Cancel anytime"
+		},
+		"stats": {
+			"landlords": "landlords",
+			"units": "units",
+			"satisfaction": "customer satisfaction"
+		},
+		"features": {
+			"title": "Features that make property management easier than ever",
+			"subtitle": "Everything you need to manage your properties and tenants in one place with advanced tools and comprehensive reports",
+			"tenants": {"title": "Tenant management", "desc": "Comprehensive tracking of tenant data, leases, and payments"},
+			"properties": {"title": "Property management", "desc": "Organize and manage all your properties and units in one place"},
+			"payments": {"title": "Payments management", "desc": "Track payments and dues with automatic late alerts"},
+			"contracts": {"title": "Contracts & documents", "desc": "Create and manage leases and legal documents easily"},
+			"reports": {"title": "Financial reports", "desc": "Comprehensive financial reports to monitor your investments"},
+			"security": {"title": "Security & protection", "desc": "High-level data protection with secure encrypted backups"}
+		},
+		"benefits": {
+			"title": "Why choose our system?",
+			"description": "We provide integrated and easy-to-use solutions to manage your properties efficiently",
+			"items": {
+				"save_time": {"title": "Save time and effort", "desc": "Automate routine tasks and save hours of daily work"},
+				"increase_revenue": {"title": "Increase revenue", "desc": "Improve rent collection rate and reduce vacancy periods"},
+				"ease_of_use": {"title": "Ease of use", "desc": "A simple and intuitive interface that requires no expertise"},
+				"great_support": {"title": "Excellent support", "desc": "A dedicated support team available around the clock"}
+			}
+		},
+		"testimonials": {
+			"title": "What our customers say",
+			"subtitle": "Real opinions from property owners using our system",
+			"card1": {"quote": "A great system that saved me a lot of time managing my properties. I can follow everything in one place.", "name": "Ahmed Mohamed", "role": "Property Owner"},
+			"card2": {"quote": "Financial reports are very detailed and help me make the right investment decisions. Highly recommended.", "name": "Fatimah Al Ali", "role": "Real Estate Investor"},
+			"card3": {"quote": "Excellent support and an easy system. The efficiency of managing my properties has greatly increased.", "name": "Khaled Al Said", "role": "Property Developer"}
+		},
+		"pricing": {"popular": "Most popular", "pro": "Pro plan"},
+		"pricing": {
+			"title": "Pricing plans to suit your needs",
+			"subtitle": "Choose the right plan and start managing your properties professionally",
+			"popular": "Most popular",
+			"free": {
+				"badge": "Free Trial",
+				"title": "Free Trial",
+				"duration": "14 days",
+				"free_label": "Free",
+				"features_summary": "Basic features only",
+				"features": {
+					"renters_limit": "Add tenants (up to 3)",
+					"data_management": "Basic data management",
+					"basic_rent": "Basic rent calculation",
+					"view_list": "View tenants list"
+				}
+			},
+			"basic": {
+				"title": "Basic Plan",
+				"price_usd": "$10",
+				"period_month": "/month",
+				"summary": "Advanced features for professionals",
+				"features": {
+					"includes_free": "All free trial features",
+					"unlimited_tenants": "Unlimited tenants",
+					"manage_housing_types": "Manage housing types",
+					"export_data": "Export data (CSV/Excel)",
+					"basic_reports": "Basic reports",
+					"basic_support": "Basic support"
+				}
+			},
+			"premium": {
+				"ribbon": "Most popular",
+				"title": "Professional Plan",
+				"price_usd": "$20",
+				"period_month": "/month",
+				"summary": "All advanced features",
+				"features": {
+					"includes_basic": "All basic plan features",
+					"advanced_financial_reports": "Advanced financial reports",
+					"full_analytics": "Comprehensive analytics",
+					"advanced_notifications": "Advanced automatic notifications",
+					"priority_support": "24/7 priority support",
+					"automatic_backups": "Automatic backups",
+					"full_customization": "Full UI customization"
+				}
+			},
+			"additional": {
+				"note": "All plans include a 14-day free trial with no credit card",
+				"cancel_anytime": "Cancel anytime",
+				"support_available": "Support available",
+				"free_updates": "Free updates"
+			}
+		},
+		"footer": {
+			"desc": "A comprehensive system to manage properties and tenants professionally and simply",
+			"product": "Product",
+			"updates": "Updates",
+			"security": "Security",
+			"support": "Support",
+			"help_center": "Help Center",
+			"tech_support": "Technical Support",
+			"training": "Training",
+			"faq": "FAQ",
+			"contact": "Contact us",
+			"phone": "+966 50 123 4567",
+			"email": "info@rental-management.com",
+			"address": "Riyadh, Saudi Arabia",
+			"rights": "All rights reserved.",
+			"privacy": "Privacy Policy",
+			"terms": "Terms of Use",
+			"cookies": "Cookies"
+		}
+	}
+	,
+	"login": {
+		"title": "Login",
+		"or": "or",
+		"create_account": "Create a new account",
+		"email_or_phone": "Email or phone",
+		"password": "Password",
+		"submit": "Login"
+	},
+	"register": {
+		"title": "Create a new account",
+		"or": "or",
+		"have_account": "Sign in if you already have an account",
+		"name": "Full name",
+		"email_or_phone": "Email or phone",
+		"password": "Password",
+		"confirm_password": "Confirm password",
+		"submit": "Create account"
+	},
+	"add_tenant": {
+		"page_title": "Add New Tenant",
+		"hero_title": "Add new tenant",
+		"hero_sub": "Enter the new tenant details accurately",
+		"form_title": "Add Tenant Form",
+		"full_name": "Full Name",
+		"placeholder_full_name": "Enter full name",
+		"phone": "Phone Number",
+		"placeholder_phone": "Example: 0123456789",
+		"email": "Email",
+		"optional": "optional",
+		"placeholder_email": "example@email.com",
+		"cin": "National ID (CIN)",
+		"placeholder_cin": "Example: AB123456",
+		"address": "Address",
+		"placeholder_address": "Enter complete tenant address",
+		"house_type": "Housing Type or Room",
+		"no_housing_types": "You haven't added any housing types yet. Please add a type from the dashboard first.",
+		"select_house_type": "Select housing type",
+		"marital_status": "Marital Status",
+		"select_marital_status": "Select marital status",
+		"single": "Single",
+		"married": "Married",
+		"family": "Family",
+		"marriage_contract": "Marriage Contract Copy (Image or PDF)",
+		"allowed_files": "Allowed files: JPG, PNG, PDF",
+		"start_date": "Rental Start Date",
+		"end_date": "Rental End Date",
+		"price_per_day": "Daily Rental Price",
+		"placeholder_price_per_day": "Example: 100",
+		"days_count": "Number of Days",
+		"total_rent": "Total Rent",
+		"important_info": "Important Information",
+		"info_save_automatically": "This tenant will be saved under your account automatically",
+		"info_verify_data": "Make sure all data is correct before saving",
+		"info_edit_later": "You can edit the data later from the tenants list",
+		"cancel": "Cancel",
+		"save": "Save tenant"
+	},
+	"housing_types": {
+		"title": "Manage housing types",
+		"input_placeholder": "Enter new housing type name",
+		"add": "Add",
+		"list_title": "Added housing types:",
+		"delete": "Delete",
+		"empty": "You have not added any type yet."
+	},
+	"currency": {
+		"selector": {"label": "Choose currency:", "selected": "Selected currency:"},
+		"names": {
+			"MAD": "MAD Moroccan Dirham (MAD)",
+			"USD": "$ US Dollar (USD)",
+			"EUR": "€ Euro (EUR)",
+			"GBP": "£ British Pound (GBP)",
+			"JPY": "¥ Japanese Yen (JPY)"
+		}
+	},
+	"errors": {
+		"invalid_email_or_phone": "Please enter a valid email or phone number",
+		"password_length": "Password must be at least 6 characters",
+		"password_mismatch": "Passwords do not match",
+		"name_required": "Name is required",
+		"email_or_phone_required": "Email or phone is required",
+		"password_required": "Password is required",
+		"current_password_incorrect": "Current password is incorrect",
+		"new_password_required": "New password is required",
+		"email_in_use": "Email is already in use",
+		"phone_in_use": "Phone number is already in use",
+		"add_admin_failed": "An error occurred while adding the admin",
+		"update_failed": "An error occurred while updating",
+		"password_change_failed": "An error occurred while changing password",
+		"housing_type_required": "Housing type name is required",
+		"housing_type_exists": "This type already exists",
+		"upload_failed": "Failed to upload file",
+		"invalid_file_type": "File type not allowed",
+		"marriage_contract_required": "Marriage contract required for married tenants",
+		"tenant_name_required": "Full name is required",
+		"tenant_phone_required": "Phone number is required",
+		"invalid_email": "Invalid email address",
+		"tenant_cin_required": "National ID is required",
+		"tenant_address_required": "Address is required",
+		"tenant_house_type_required": "Housing type is required",
+		"tenant_marital_status_required": "Marital status is required",
+		"tenant_start_date_required": "Rental start date is required",
+		"tenant_end_date_required": "Rental end date is required",
+		"tenant_price_per_day_required": "Daily rental price is required and must be a positive number",
+		"tenant_end_date_after_start": "End date must be after start date",
+		"tenant_add_failed": "An error occurred while adding the tenant",
+		"invalid_admin_id": "Invalid admin ID",
+		"admin_not_found": "Admin not found",
+		"not_found": {
+			"title": "Page not found",
+			"heading": "We couldn't find that page",
+			"desc": "The page you are looking for might have been removed or is temporarily unavailable.",
+			"back_home": "Back to Home"
+		},
+		"user_not_found": "User not found",
+		"financial_reports": {
+			"title": "Comprehensive Financial Reports to Monitor Your Investment Performance",
+			"subtitle": "Monitor your investment performance and analyze financial data",
+			"per_day": "/day"
+		}
+	}
+	,
+	"success": {
+		"add_admin": "Admin added successfully! Redirecting to Manage Admins...",
+		"profile_updated": "Profile updated successfully, redirecting to profile...",
+		"password_changed": "Password changed successfully",
+		"tenant_added": "Tenant added successfully!",
+		"admin_updated": "Admin updated successfully! Redirecting to Manage Admins..."
+	},
+	"add_admin": {
+		"title": "Add New Admin",
+		"heading": "Add New Admin",
+		"name": "Full name",
+		"email_or_phone": "Email or phone",
+		"password": "Password",
+		"confirm_password": "Confirm password",
+		"placeholder_name": "Enter admin name",
+		"placeholder_email_or_phone": "Enter admin email or phone",
+		"placeholder_password": "Enter password",
+		"placeholder_confirm_password": "Re-enter password",
+		"submit": "Add Admin"
+	},
+	"change_password": {
+		"title": "Change Password",
+		"heading": "Change Password",
+		"current_password": "Current password",
+		"new_password": "New password",
+		"confirm_new_password": "Confirm new password",
+		"placeholder_current": "Enter current password",
+		"placeholder_new": "Enter new password",
+		"placeholder_confirm": "Re-enter new password",
+		"submit": "Change Password"
+	},
+	"edit_profile": {
+		"title": "Edit Profile",
+		"heading": "Edit Profile",
+		"name": "Full name",
+		"email_or_phone": "Email or phone",
+		"placeholder_name": "Enter your full name",
+		"placeholder_email_or_phone": "Enter your email or phone",
+		"submit": "Update Profile"
+	},
+	"manage_admins": {
+		"title": "Manage Admins",
+		"heading": "Manage Admins",
+		"add_admin": "Add Admin",
+		"table": {
+			"name": "Name",
+			"email": "Email",
+			"phone": "Phone",
+			"created_at": "Created At",
+			"actions": "Actions"
+		},
+		"delete_success": "Admin deleted successfully",
+		"delete_error": "An error occurred while deleting the admin"
+	},
+	"confirm": {
+		"delete_admin": "Are you sure you want to delete this admin?",
+		"delete_tenant": "Are you sure you want to delete this tenant?"
+	},
+	"edit_admin": {
+		"title": "Edit Admin",
+		"heading": "Edit Admin",
+		"name": "Full Name",
+		"email_or_phone": "Email or Phone",
+		"new_password": "New Password (Optional)",
+		"confirm_new_password": "Confirm New Password",
+		"placeholder_name": "Enter admin name",
+		"placeholder_email_or_phone": "Enter admin email or phone",
+		"placeholder_password": "Enter new password if you want to change it",
+		"placeholder_confirm_password": "Re-enter the new password",
+		"submit": "Update Data"
+	},
+	"export_tenants": {
+		"name": "Name",
+		"phone": "Phone",
+		"email": "Email",
+		"cin": "National ID",
+		"address": "Address",
+		"house_type": "Housing Type",
+		"marital_status": "Marital Status",
+		"marriage_contract": "Marriage Contract",
+		"start_date": "Start Date",
+		"end_date": "End Date",
+		"view_contract": "View Contract",
+		"not_available": "Not Available"
+	},
+	"edit_tenant": {
+		"title": "Edit Tenant",
+		"hero_title": "Edit Tenant",
+		"hero_sub": "Edit data for",
+		"form_title": "Edit Tenant Form",
+		"full_name": "Full Name",
+		"phone": "Phone Number",
+		"email": "Email",
+		"optional": "optional",
+		"cin": "National ID (CIN)",
+		"address": "Address",
+		"placeholder_address": "Enter complete tenant address",
+		"house_type": "Housing Type or Room",
+		"select_house_type": "Select housing type",
+		"marital_status": "Marital Status",
+		"select_marital_status": "Select marital status",
+		"single": "Single",
+		"married": "Married",
+		"family": "Family",
+		"marriage_contract": "Marriage Contract Copy (Image or PDF)",
+		"allowed_files": "Allowed files: JPG, PNG, PDF",
+		"current_contract": "Current Contract",
+		"view_contract": "View Contract",
+		"start_date": "Rental Start Date",
+		"end_date": "Rental End Date",
+		"price_per_day": "Daily Rental Price",
+		"placeholder_price_per_day": "Example: 100",
+		"days_count": "Number of Days",
+		"total_rent": "Total Rent",
+		"important_info": "Edit Information",
+		"info_verify_data": "Make sure all data is correct before saving",
+		"info_update_immediately": "Data will be updated immediately after saving",
+		"info_cancel_edit": "You can cancel editing and return to the main list",
+		"cancel": "Cancel",
+		"save_changes": "Save Changes"
+	},
+	"full_tenants_list": {
+		"title": "Full Tenants List",
+		"heading": "Full Tenants List",
+		"all_housing_types": "All Housing Types",
+		"search_placeholder": "Search by name, phone, email, ID, or address",
+		"search": "Search",
+		"export_excel": "Export Excel",
+		"not_specified": "Not specified",
+		"available": "Available",
+		"not_available": "Not available",
+		"view_marriage_contract": "View marriage contract",
+		"active": "Active",
+		"expired": "Expired",
+		"table": {
+			"name": "Name",
+			"phone": "Phone",
+			"email": "Email",
+			"cin": "National ID",
+			"address": "Address",
+			"house_type": "Housing Type",
+			"marital_status": "Marital Status",
+			"marriage_contract": "Marriage Contract",
+			"price_per_day": "Price per Day",
+			"total_rent": "Total Rent",
+			"start_date": "Start Date",
+			"end_date": "End Date",
+			"status": "Status",
+			"actions": "Actions"
+		}
+	}
+}
+
+

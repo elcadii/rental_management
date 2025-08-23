@@ -54,7 +54,7 @@ $admin_housing_types = $stmt->fetchAll();
 <?php include 'sidebar.php'; ?>
 
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="<?php echo htmlspecialchars(currentLang()); ?>" dir="<?php echo htmlspecialchars(currentDir()); ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -73,7 +73,7 @@ $admin_housing_types = $stmt->fetchAll();
             <div class="bg-blue-100 p-3 rounded-full ml-0 sm:ml-4 mb-2 sm:mb-0">
                 <i class="fas fa-building text-blue-600 text-2xl"></i>
             </div>
-            <h2 class="text-2xl font-extrabold text-gray-900">إدارة أنواع السكن</h2>
+            <h2 class="text-2xl font-extrabold text-gray-900"><?php echo __('housing_types.title'); ?></h2>
         </div>
         <?php if ($housing_type_success): ?>
             <div class="text-green-700 bg-green-50 border border-green-200 rounded-lg px-4 py-2 mb-4 text-sm flex items-center gap-2">
@@ -86,17 +86,17 @@ $admin_housing_types = $stmt->fetchAll();
             </div>
         <?php endif; ?>
         <form method="post" class="flex flex-col sm:flex-row gap-4 items-center mb-6">
-            <input type="text" name="housing_type_name" placeholder="أدخل اسم نوع السكن الجديد" class="flex-1 px-4 py-3 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition text-lg" required>
+            <input type="text" name="housing_type_name" placeholder="<?php echo __('housing_types.input_placeholder'); ?>" class="flex-1 px-4 py-3 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition text-lg" required>
             <button type="submit" name="add_housing_type" class="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold text-lg transition flex items-center gap-2">
-                <i class="fas fa-plus"></i> إضافة
+                <i class="fas fa-plus"></i> <?php echo __('housing_types.add'); ?>
             </button>
         </form>
         <div>
             <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
-                <i class="fas fa-list-ul text-blue-400"></i> أنواع السكن المضافة:
+                <i class="fas fa-list-ul text-blue-400"></i> <?php echo __('housing_types.list_title'); ?>
             </h3>
             <?php if (empty($admin_housing_types)): ?>
-                <div class="text-gray-400 italic">لم تقم بإضافة أي نوع بعد.</div>
+                <div class="text-gray-400 italic"><?php echo __('housing_types.empty'); ?></div>
             <?php else: ?>
                 <ul class="space-y-2">
                     <?php foreach ($admin_housing_types as $type): ?>
@@ -107,7 +107,7 @@ $admin_housing_types = $stmt->fetchAll();
                             <form method="post" class="m-0 p-0">
                                 <input type="hidden" name="delete_housing_type" value="<?php echo $type['id']; ?>">
                                 <button type="submit" class="text-red-500 hover:text-red-700 transition flex items-center gap-1" onclick="return confirm('هل أنت متأكد من حذف هذا النوع؟');">
-                                    <i class="fas fa-trash-alt"></i> حذف
+                                    <i class="fas fa-trash-alt"></i> <?php echo __('housing_types.delete'); ?>
                                 </button>
                             </form>
                         </li>

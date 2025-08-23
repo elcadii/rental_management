@@ -1,0 +1,492 @@
+{
+	"app": {"title": "نظام الإيجارات"},
+	"header": {"logout": "تسجيل الخروج"},
+	"sidebar": {
+		"home": "الرئيسية",
+		"add_tenant": "إضافة مستأجر",
+		"tenants_list": "قائمة المستأجرين",
+		"housing_types": "أنواع السكن",
+		"profile": "حسابي"
+	},
+	"profile": {
+		"page_title": "الملف الشخصي",
+		"greeting": "مرحباً، {name}",
+		"welcome_subtitle": "مرحباً بك في لوحة تحكم نظام إدارة الإيجارات",
+		"personal_info": "المعلومات الشخصية",
+		"email": "البريد الإلكتروني",
+		"phone": "رقم الهاتف",
+		"join_date": "تاريخ الانضمام",
+		"not_set": "غير محدد",
+		"edit_profile": "تعديل المعلومات الشخصية",
+		"change_password": "تغيير كلمة المرور",
+		"stats_total_tenants": "إجمالي المستأجرين",
+		"stats_housing_types": "أنواع السكن",
+		"stats_active_contracts": "العقود النشطة",
+		"stats_expired_contracts": "العقود المنتهية",
+		"avg_daily_rent": "متوسط الإيجار اليومي",
+		"occupancy_rate": "معدل الإشغال",
+		"units_occupied": "من الوحدات مشغولة",
+		"tenants_label": "مستأجر",
+		"monthly_revenue_title": "الإيرادات الشهرية (آخر 6 أشهر) - {symbol} {code}",
+		"revenue_by_type_title": "الإيرادات حسب نوع السكن - {symbol} {code}",
+		"contracts_status": "حالة العقود",
+		"active_contracts": "عقود نشطة",
+		"expired_contracts": "عقود منتهية",
+		"quick_actions": "إجراءات سريعة",
+		"view_all_tenants": "عرض جميع المستأجرين",
+		"export_excel": "تصدير تقرير Excel",
+		"revenue_summary": "ملخص الإيرادات"
+	},
+	"dashboard": {
+		"page_title": "لوحة التحكم",
+		"trial_banner": {
+			"title": "تجربة مجانية لمدة 14 يوم",
+			"days_left": "{days} أيام متبقية في التجربة المجانية",
+			"upgrade": "ترقية الحساب"
+		},
+		"hero": {
+			"title": "نظام إدارة الإيجارات",
+			"subtitle": "نظام شامل لإدارة حجوزات الإيجار للمنازل المتعددة مع إمكانية تتبع المستأجرين وإدارة العقود"
+		},
+		"stats": {
+			"title": "الإحصائيات",
+			"description": "تقارير وإحصائيات حول الإيجارات والمستأجرين",
+			"total_tenants": "إجمالي المستأجرين",
+			"active_contracts": "العقود النشطة",
+			"expired_contracts": "العقود المنتهية",
+			"view_details": "عرض التفاصيل"
+		},
+		"tenants": {
+			"title": "قائمة المستأجرين",
+			"description": "عرض وإدارة جميع المستأجرين الحاليين والسابقين",
+			"no_tenants": "لا توجد مستأجرين مسجلين بعد",
+			"view_full_list": "عرض القائمة الكاملة"
+		},
+		"add_tenant": {
+			"title": "إضافة مستأجر جديد",
+			"description": "تسجيل مستأجر جديد مع جميع البيانات المطلوبة",
+			"start_message": "ابدأ بإضافة مستأجر جديد للنظام",
+			"button": "إضافة مستأجر"
+		},
+		"features": {
+			"title": "المميزات الرئيسية",
+			"tenant_tracking": {
+				"title": "تتبع المستأجرين",
+				"description": "حفظ وتتبع جميع بيانات المستأجرين بسهولة"
+			},
+			"multi_property": {
+				"title": "إدارة متعددة المنازل",
+				"description": "إدارة عدة أنواع من المنازل والشقق في مكان واحد"
+			}
+		}
+	}
+	,
+	"index": {
+		"home": "الصفحة الرئيسية",
+		"trial_banner": {"message": "جرب نظام إدارة الإيجارات مجاناً لمدة 14 يوم – لا حاجة لبطاقة ائتمان ✨"},
+		"nav": {
+			"features": "المميزات",
+			"pricing": "الأسعار",
+			"testimonials": "آراء العملاء",
+			"contact": "تواصل معنا",
+			"dashboard": "لوحة التحكم",
+			"login": "تسجيل الدخول"
+		},
+		"hero": {
+			"badge": "نظام إدارة متكامل",
+			"title_line1": "إدارة المستأجرين والعقارات",
+			"title_line2": "بسهولة تامة",
+			"subtitle": "نظام شامل لإدارة العقارات والمستأجرين مع متابعة المدفوعات والصيانة والتقارير المالية بطريقة احترافية ومبسطة",
+			"watch_demo": "شاهد العرض التوضيحي"
+		},
+		"cta": {
+			"trial": "ابدأ التجربة المجانية",
+			"title": "ابدأ في إدارة عقاراتك بطريقة احترافية اليوم",
+			"subtitle": "انضم إلى مئات ملاك العقارات الذين يثقون في نظامنا لإدارة استثماراتهم",
+			"trial_14": "ابدأ التجربة المجانية لمدة 14 يوم",
+			"talk_to_expert": "تحدث مع خبير",
+			"no_cc": "لا حاجة لبطاقة ائتمانية • إلغاء في أي وقت"
+		},
+		"stats": {
+			"landlords": "مالك عقار",
+			"units": "وحدة سكنية",
+			"satisfaction": "رضا العملاء"
+		},
+		"features": {
+			"title": "مميزات تجعل إدارة العقارات أسهل من أي وقت مضى",
+			"subtitle": "كل ما تحتاجه لإدارة عقاراتك ومستأجريك في مكان واحد مع أدوات متقدمة وتقارير شاملة",
+			"tenants": {"title": "إدارة المستأجرين", "desc": "متابعة شاملة لبيانات المستأجرين وعقود الإيجار والمدفوعات"},
+			"properties": {"title": "إدارة العقارات", "desc": "تنظيم وإدارة جميع عقاراتك ووحداتك السكنية في مكان واحد"},
+			"payments": {"title": "إدارة المدفوعات", "desc": "متابعة المدفوعات والمستحقات مع إشعارات تلقائية للمتأخرات"},
+			"contracts": {"title": "العقود والوثائق", "desc": "إنشاء وإدارة عقود الإيجار والوثائق القانونية بسهولة"},
+			"reports": {"title": "التقارير المالية", "desc": "تقارير مالية شاملة ومفصلة لمتابعة أداء استثماراتك"},
+			"security": {"title": "الأمان والحماية", "desc": "حماية عالية لبياناتك مع نسخ احتياطية آمنة ومشفرة"}
+		},
+		"benefits": {
+			"title": "لماذا تختار نظامنا؟",
+			"description": "نوفر لك حلولاً متكاملة وسهلة الاستخدام لإدارة عقاراتك بكفاءة عالية",
+			"items": {
+				"save_time": {"title": "توفير الوقت والجهد", "desc": "أتمتة العمليات الروتينية وتوفير ساعات من العمل اليومي"},
+				"increase_revenue": {"title": "زيادة الإيرادات", "desc": "تحسين معدل تحصيل الإيجارات وتقليل فترات الشغور"},
+				"ease_of_use": {"title": "سهولة الاستخدام", "desc": "واجهة بسيطة ومفهومة لا تحتاج خبرة تقنية"},
+				"great_support": {"title": "دعم فني متميز", "desc": "فريق دعم متخصص متاح على مدار الساعة لمساعدتك"}
+			}
+		},
+		"testimonials": {
+			"title": "ماذا يقول عملاؤنا",
+			"subtitle": "آراء حقيقية من ملاك العقارات الذين يستخدمون نظامنا",
+			"card1": {"quote": "نظام رائع وفر علي الكثير من الوقت في إدارة عقاراتي. أصبح بإمكاني متابعة كل شيء من مكان واحد.", "name": "أحمد محمد", "role": "مالك عقارات"},
+			"card2": {"quote": "التقارير المالية مفصلة جداً وتساعدني في اتخاذ قرارات استثمارية صحيحة. أنصح به بشدة.", "name": "فاطمة العلي", "role": "مستثمرة عقارية"},
+			"card3": {"quote": "الدعم الفني ممتاز والنظام سهل الاستخدام. زادت كفاءة إدارة عقاراتي بشكل كبير.", "name": "خالد السعيد", "role": "مطور عقاري"}
+		},
+		"pricing": {
+			"title": "خطط أسعار تناسب احتياجاتك",
+			"subtitle": "اختر الخطة المناسبة لاحتياجاتك وابدأ في إدارة عقاراتك بطريقة احترافية",
+			"popular": "الأكثر شعبية",
+			"free": {
+				"badge": "تجربة مجانية",
+				"title": "Free Trial",
+				"duration": "14 يوم",
+				"free_label": "مجاناً",
+				"features_summary": "المميزات الأساسية فقط",
+				"features": {
+					"renters_limit": "إضافة مستأجرين (حد أقصى 3)",
+					"data_management": "إدارة البيانات الأساسية",
+					"basic_rent": "حساب الإيجار الأساسي",
+					"view_list": "عرض قائمة المستأجرين"
+				}
+			},
+			"basic": {
+				"title": "الخطة الأساسية",
+				"price_usd": "$10",
+				"period_month": "/شهرياً",
+				"summary": "مميزات متقدمة للمحترفين",
+				"features": {
+					"includes_free": "جميع مميزات التجربة المجانية",
+					"unlimited_tenants": "مستأجرين غير محدود",
+					"manage_housing_types": "إدارة أنواع السكن",
+					"export_data": "تصدير البيانات (CSV/Excel)",
+					"basic_reports": "تقارير أساسية",
+					"basic_support": "دعم فني أساسي"
+				}
+			},
+			"premium": {
+				"ribbon": "الأكثر شعبية",
+				"title": "الخطة الاحترافية",
+				"price_usd": "$20",
+				"period_month": "/شهرياً",
+				"summary": "جميع المميزات المتقدمة",
+				"features": {
+					"includes_basic": "جميع مميزات الخطة الأساسية",
+					"advanced_financial_reports": "تقارير مالية متقدمة",
+					"full_analytics": "إحصائيات وتحليلات شاملة",
+					"advanced_notifications": "إشعارات تلقائية متقدمة",
+					"priority_support": "دعم فني أولوية 24/7",
+					"automatic_backups": "نسخ احتياطية تلقائية",
+					"full_customization": "تخصيص كامل للواجهة"
+				}
+			},
+			"additional": {
+				"note": "جميع الخطط تشمل تجربة مجانية لمدة 14 يوم بدون بطاقة ائتمان",
+				"cancel_anytime": "إلغاء في أي وقت",
+				"support_available": "دعم فني متاح",
+				"free_updates": "تحديثات مجانية"
+			}
+		},
+		"footer": {
+			"desc": "نظام شامل لإدارة العقارات والمستأجرين بطريقة احترافية ومبسطة",
+			"product": "المنتج",
+			"updates": "التحديثات",
+			"security": "الأمان",
+			"support": "الدعم",
+			"help_center": "مركز المساعدة",
+			"tech_support": "الدعم الفني",
+			"training": "التدريب",
+			"faq": "الأسئلة الشائعة",
+			"contact": "تواصل معنا",
+			"phone": "+966 50 123 4567",
+			"email": "info@rental-management.com",
+			"address": "الرياض، المملكة العربية السعودية",
+			"rights": "جميع الحقوق محفوظة.",
+			"privacy": "سياسة الخصوصية",
+			"terms": "شروط الاستخدام",
+			"cookies": "ملفات تعريف الارتباط"
+		}
+	}
+	,
+	"login": {
+		"title": "تسجيل الدخول",
+		"or": "أو",
+		"create_account": "أنشئ حساباً جديداً",
+		"email_or_phone": "البريد الإلكتروني أو رقم الهاتف",
+		"password": "كلمة المرور",
+		"submit": "تسجيل الدخول"
+	},
+	"register": {
+		"title": "إنشاء حساب جديد",
+		"or": "أو",
+		"have_account": "سجل دخولك إذا كان لديك حساب",
+		"name": "الاسم الكامل",
+		"email_or_phone": "البريد الإلكتروني أو رقم الهاتف",
+		"password": "كلمة المرور",
+		"confirm_password": "تأكيد كلمة المرور",
+		"submit": "إنشاء الحساب"
+	},
+	"add_tenant": {
+		"page_title": "إضافة مستأجر جديد",
+		"hero_title": "إضافة مستأجر جديد",
+		"hero_sub": "أدخل بيانات المستأجر الجديد بدقة",
+		"form_title": "نموذج إضافة مستأجر",
+		"full_name": "الاسم الكامل للمستأجر",
+		"placeholder_full_name": "أدخل الاسم الكامل",
+		"phone": "رقم الهاتف",
+		"placeholder_phone": "مثال: 0123456789",
+		"email": "البريد الإلكتروني",
+		"optional": "اختياري",
+		"placeholder_email": "example@email.com",
+		"cin": "رقم الهوية الوطنية (CIN)",
+		"placeholder_cin": "مثال: AB123456",
+		"address": "العنوان",
+		"placeholder_address": "أدخل العنوان الكامل للمستأجر",
+		"house_type": "نوع السكن أو الغرفة",
+		"no_housing_types": "لم تقم بإضافة أي نوع سكن بعد. الرجاء إضافة نوع من لوحة التحكم أولاً.",
+		"select_house_type": "اختر نوع السكن",
+		"marital_status": "الحالة الاجتماعية",
+		"select_marital_status": "اختر الحالة الاجتماعية",
+		"single": "أعزب",
+		"married": "متزوج",
+		"family": "عائلة",
+		"marriage_contract": "نسخة من عقد الزواج (صورة أو PDF)",
+		"allowed_files": "الملفات المسموحة: JPG, PNG, PDF",
+		"start_date": "تاريخ بداية الإيجار",
+		"end_date": "تاريخ نهاية الإيجار",
+		"price_per_day": "سعر الإيجار اليومي",
+		"placeholder_price_per_day": "مثال: 100",
+		"days_count": "عدد الأيام",
+		"total_rent": "إجمالي الإيجار",
+		"important_info": "معلومات مهمة",
+		"info_save_automatically": "سيتم حفظ هذا المستأجر تحت حسابك تلقائياً",
+		"info_verify_data": "تأكد من صحة جميع البيانات قبل الحفظ",
+		"info_edit_later": "يمكنك تعديل البيانات لاحقاً من قائمة المستأجرين",
+		"cancel": "إلغاء",
+		"save": "حفظ المستأجر"
+	},
+	"housing_types": {
+		"title": "إدارة أنواع السكن",
+		"input_placeholder": "أدخل اسم نوع السكن الجديد",
+		"add": "إضافة",
+		"list_title": "أنواع السكن المضافة:",
+		"delete": "حذف",
+		"empty": "لم تقم بإضافة أي نوع بعد."
+	},
+	"currency": {
+		"selector": {"label": "اختر العملة:", "selected": "العملة المحددة:"},
+		"names": {
+			"MAD": "د.م الدرهم المغربي (MAD)",
+			"USD": "$ الدولار الأمريكي (USD)",
+			"EUR": "€ اليورو (EUR)",
+			"GBP": "£ الجنيه الإسترليني (GBP)",
+			"JPY": "¥ الين الياباني (JPY)"
+		}
+	},
+	"errors": {
+		"invalid_email_or_phone": "يرجى إدخال بريد إلكتروني أو رقم هاتف صحيح",
+		"password_length": "كلمة المرور يجب أن تكون 6 أحرف على الأقل",
+		"password_mismatch": "كلمات المرور غير متطابقة",
+		"name_required": "الاسم مطلوب",
+		"email_or_phone_required": "البريد الإلكتروني أو رقم الهاتف مطلوب",
+		"password_required": "كلمة المرور مطلوبة",
+		"current_password_incorrect": "كلمة المرور الحالية غير صحيحة",
+		"new_password_required": "كلمة المرور الجديدة مطلوبة",
+		"email_in_use": "البريد الإلكتروني مستخدم بالفعل",
+		"phone_in_use": "رقم الهاتف مستخدم بالفعل",
+		"add_admin_failed": "حدث خطأ أثناء إضافة المدير",
+		"update_failed": "حدث خطأ أثناء التحديث",
+		"password_change_failed": "حدث خطأ أثناء تغيير كلمة المرور",
+		"housing_type_required": "اسم نوع السكن مطلوب",
+		"housing_type_exists": "هذا النوع مضاف بالفعل",
+		"upload_failed": "فشل في رفع الملف",
+		"invalid_file_type": "نوع الملف غير مسموح به",
+		"marriage_contract_required": "عقد الزواج مطلوب للمتزوجين",
+		"tenant_name_required": "الاسم الكامل مطلوب",
+		"tenant_phone_required": "رقم الهاتف مطلوب",
+		"invalid_email": "البريد الإلكتروني غير صحيح",
+		"tenant_cin_required": "رقم الهوية مطلوب",
+		"tenant_address_required": "العنوان مطلوب",
+		"tenant_house_type_required": "نوع السكن مطلوب",
+		"tenant_marital_status_required": "الحالة الاجتماعية مطلوبة",
+		"tenant_start_date_required": "تاريخ بداية الإيجار مطلوب",
+		"tenant_end_date_required": "تاريخ نهاية الإيجار مطلوب",
+		"tenant_price_per_day_required": "سعر الإيجار اليومي مطلوب ويجب أن يكون رقمًا موجبًا",
+		"tenant_end_date_after_start": "تاريخ النهاية يجب أن يكون بعد تاريخ البداية",
+		"tenant_add_failed": "حدث خطأ أثناء إضافة المستأجر",
+		"invalid_admin_id": "معرف المدير غير صحيح",
+		"admin_not_found": "المدير غير موجود",
+		"not_found": {
+			"title": "الصفحة غير موجودة",
+			"heading": "تعذر العثور على الصفحة",
+			"desc": "قد تكون الصفحة التي تبحث عنها محذوفة أو غير متاحة مؤقتاً.",
+			"back_home": "العودة إلى الرئيسية"
+		},
+		"user_not_found": "المستخدم غير موجود",
+		"financial_reports": {
+			"title": "تقارير مالية شاملة ومفصلة لمتابعة أداء استثماراتك",
+			"subtitle": "متابعة أداء استثماراتك وتحليل البيانات المالية",
+			"per_day": "/يوم"
+		}
+	}
+	,
+	"success": {
+		"add_admin": "تمت إضافة المدير بنجاح! سيتم تحويلك لإدارة المدراء...",
+		"profile_updated": "تم تحديث البيانات بنجاح، سيتم تحويلك للملف الشخصي...",
+		"password_changed": "تم تغيير كلمة المرور بنجاح",
+		"tenant_added": "تم إضافة المستأجر بنجاح!",
+		"admin_updated": "تم تحديث بيانات المدير بنجاح! سيتم تحويلك لإدارة المدراء..."
+	},
+	"add_admin": {
+		"title": "إضافة مدير جديد",
+		"heading": "إضافة مدير جديد",
+		"name": "الاسم الكامل",
+		"email_or_phone": "البريد الإلكتروني أو رقم الهاتف",
+		"password": "كلمة المرور",
+		"confirm_password": "تأكيد كلمة المرور",
+		"placeholder_name": "أدخل اسم المدير",
+		"placeholder_email_or_phone": "أدخل بريد المدير أو رقم هاتفه",
+		"placeholder_password": "أدخل كلمة المرور",
+		"placeholder_confirm_password": "أعد إدخال كلمة المرور",
+		"submit": "إضافة المدير"
+	},
+	"change_password": {
+		"title": "تغيير كلمة المرور",
+		"heading": "تغيير كلمة المرور",
+		"current_password": "كلمة المرور الحالية",
+		"new_password": "كلمة المرور الجديدة",
+		"confirm_new_password": "تأكيد كلمة المرور الجديدة",
+		"placeholder_current": "أدخل كلمة المرور الحالية",
+		"placeholder_new": "أدخل كلمة المرور الجديدة",
+		"placeholder_confirm": "أعد إدخال كلمة المرور الجديدة",
+		"submit": "تغيير كلمة المرور"
+	},
+	"edit_profile": {
+		"title": "تعديل الملف الشخصي",
+		"heading": "تعديل الملف الشخصي",
+		"name": "الاسم الكامل",
+		"email_or_phone": "البريد الإلكتروني أو رقم الهاتف",
+		"placeholder_name": "أدخل اسمك الكامل",
+		"placeholder_email_or_phone": "أدخل بريدك الإلكتروني أو رقم هاتفك",
+		"submit": "تحديث البيانات"
+	},
+	"manage_admins": {
+		"title": "إدارة المدراء",
+		"heading": "إدارة المدراء",
+		"add_admin": "إضافة مدير",
+		"table": {
+			"name": "الاسم",
+			"email": "البريد الإلكتروني",
+			"phone": "رقم الهاتف",
+			"created_at": "تاريخ الإنشاء",
+			"actions": "إجراءات"
+		},
+		"delete_success": "تم حذف المدير بنجاح",
+		"delete_error": "حدث خطأ أثناء حذف المدير"
+	},
+	"confirm": {
+		"delete_admin": "هل أنت متأكد من حذف هذا المدير؟",
+		"delete_tenant": "هل أنت متأكد من حذف هذا المستأجر؟"
+	},
+	"edit_admin": {
+		"title": "تعديل بيانات المدير",
+		"heading": "تعديل بيانات المدير",
+		"name": "الاسم الكامل",
+		"email_or_phone": "البريد الإلكتروني أو رقم الهاتف",
+		"new_password": "كلمة مرور جديدة (اختياري)",
+		"confirm_new_password": "تأكيد كلمة المرور الجديدة",
+		"placeholder_name": "أدخل اسم المدير",
+		"placeholder_email_or_phone": "أدخل بريد المدير أو رقم هاتفه",
+		"placeholder_password": "أدخل كلمة مرور جديدة إذا أردت تغييرها",
+		"placeholder_confirm_password": "أعد إدخال كلمة المرور الجديدة",
+		"submit": "تحديث البيانات"
+	},
+	"export_tenants": {
+		"name": "الاسم",
+		"phone": "الهاتف",
+		"email": "البريد الإلكتروني",
+		"cin": "رقم الهوية",
+		"address": "العنوان",
+		"house_type": "نوع السكن",
+		"marital_status": "الحالة الاجتماعية",
+		"marriage_contract": "عقد الزواج",
+		"start_date": "تاريخ البداية",
+		"end_date": "تاريخ النهاية",
+		"view_contract": "عرض العقد",
+		"not_available": "غير متوفر"
+	},
+	"edit_tenant": {
+		"title": "تعديل بيانات المستأجر",
+		"hero_title": "تعديل بيانات المستأجر",
+		"hero_sub": "تعديل بيانات",
+		"form_title": "نموذج تعديل المستأجر",
+		"full_name": "الاسم الكامل للمستأجر",
+		"phone": "رقم الهاتف",
+		"email": "البريد الإلكتروني",
+		"optional": "اختياري",
+		"cin": "رقم الهوية الوطنية (CIN)",
+		"address": "العنوان",
+		"placeholder_address": "أدخل العنوان الكامل للمستأجر",
+		"house_type": "نوع السكن أو الغرفة",
+		"select_house_type": "اختر نوع السكن",
+		"marital_status": "الحالة الاجتماعية",
+		"select_marital_status": "اختر الحالة الاجتماعية",
+		"single": "أعزب",
+		"married": "متزوج",
+		"family": "عائلة",
+		"marriage_contract": "نسخة من عقد الزواج (صورة أو PDF)",
+		"allowed_files": "الملفات المسموحة: JPG, PNG, PDF",
+		"current_contract": "العقد الحالي",
+		"view_contract": "عرض العقد",
+		"start_date": "تاريخ بداية الإيجار",
+		"end_date": "تاريخ نهاية الإيجار",
+		"price_per_day": "سعر الإيجار اليومي",
+		"placeholder_price_per_day": "مثال: 100",
+		"days_count": "عدد الأيام",
+		"total_rent": "إجمالي الإيجار",
+		"important_info": "معلومات التعديل",
+		"info_verify_data": "تأكد من صحة جميع البيانات قبل الحفظ",
+		"info_update_immediately": "سيتم تحديث البيانات فوراً بعد الحفظ",
+		"info_cancel_edit": "يمكنك إلغاء التعديل والعودة للقائمة الرئيسية",
+		"cancel": "إلغاء",
+		"save_changes": "حفظ التعديلات"
+	},
+	"full_tenants_list": {
+		"title": "القائمة الكاملة للمستأجرين",
+		"heading": "القائمة الكاملة للمستأجرين",
+		"all_housing_types": "كل أنواع السكن",
+		"search_placeholder": "بحث بالاسم أو الهاتف أو البريد أو الهوية أو العنوان",
+		"search": "بحث",
+		"export_excel": "تصدير Excel",
+		"not_specified": "غير محدد",
+		"available": "متوفر",
+		"not_available": "غير متوفر",
+		"view_marriage_contract": "عرض عقد الزواج",
+		"active": "نشط",
+		"expired": "منتهي",
+		"table": {
+			"name": "الاسم",
+			"phone": "الهاتف",
+			"email": "البريد الإلكتروني",
+			"cin": "رقم الهوية",
+			"address": "العنوان",
+			"house_type": "نوع السكن",
+			"marital_status": "الحالة الاجتماعية",
+			"marriage_contract": "عقد الزواج",
+			"price_per_day": "سعر اليوم",
+			"total_rent": "إجمالي الإيجار",
+			"start_date": "تاريخ البداية",
+			"end_date": "تاريخ النهاية",
+			"status": "الحالة",
+			"actions": "الإجراءات"
+		}
+	}
+}
+
+
